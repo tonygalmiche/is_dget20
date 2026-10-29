@@ -48,8 +48,8 @@
                     </group>
                     <group string="Contrats">
                         <field name="contrat_ids" nolabel="1" readonly="1">
-                            <tree default_order="name">
-                                <button string="Contrat" name="acceder_contrat_action" type="object" icon="fa-search-plus"/>
+                            <list default_order="name">
+                                <button string="Contrat" title="Contrat" name="acceder_contrat_action" type="object" icon="zoom_in"/>
                                 <field name="name"/>
                                 <field name="signe"/>
                                 <field name="client_id"/>
@@ -57,30 +57,30 @@
                                 <field name="date"/>
                                 <field name="refclient"/>
                                 <field name="traitance_id"/>
-                            </tree>
+                            </list>
                         </field>
                     </group>
 
                     <group string="Adjudicataires">
                         <field name="adjudicataire_ids" nolabel="1">
-                            <tree editable="bottom">
+                            <list editable="bottom">
                                 <field name="adjudicataire_id" required="1"/>
                                 <field name="nomdulot"/>
                                 <field name="montant" sum="total"/>
                                 <field name="retenu"/>
                                 <field name="notes"/>
-                            </tree>
+                            </list>
                         </field>
                     </group>
 
                     <group string="Notes">
                         <field name="note_ids" nolabel="1">
-                            <tree editable="bottom">
+                            <list editable="bottom">
                                 <field name="date"/>
                                 <field name="auteur"/>
                                 <field name="titre"/>
                                 <field name="texte_note"/>
-                            </tree>
+                            </list>
                         </field>
                     </group>
                 </sheet>
@@ -91,7 +91,7 @@
         <field name="name">is.dossier.tree</field>
         <field name="model">is.dossier</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="numaff"/>
                 <field name="nom"/>
                 <field name="lieu"/>
@@ -103,7 +103,7 @@
                 <field name="duree" widget="float_time"/>
                 <field name="referencee_ids" widget="many2many_tags"/>
                 <field name="state"/>
-            </tree>
+            </list>
         </field>
     </record>
     <record id="is_dossier_search" model="ir.ui.view">
@@ -135,7 +135,7 @@
         <field name="name">is_dossier_graph</field>
         <field name="model">is.dossier</field>
         <field name="arch" type="xml">
-            <graph type="bar" orientation="vertical" stacked="False">
+            <graph type="bar" stacked="False">
                 <field name="m_ouvrage_id" type="row"/>
                 <field name="montant_ope"  type="measure"/>
             </graph>
@@ -143,10 +143,8 @@
     </record>
     <record  id="is_dossier_action" model="ir.actions.act_window">
         <field name="name">Dossier</field>
-        <field name="res_model">is.dossier</field>
-        <field name="view_type">form</field>
-        <field name="limit">200</field>
-        <field name="view_mode">tree,form,pivot,graph</field>
+        <field name="res_model">is.dossier</field>        <field name="limit">200</field>
+        <field name="view_mode">list,form,pivot,graph</field>
     </record>
 
 
@@ -175,14 +173,14 @@
         <field name="name">is.dossier.adjudicataire.tree</field>
         <field name="model">is.dossier.adjudicataire</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="dossier_id"/>
                 <field name="adjudicataire_id"/>
                 <field name="nomdulot"/>
                 <field name="montant" sum="Total"/>
                 <field name="retenu"/>
                 <field name="notes"/>
-            </tree>
+            </list>
         </field>
     </record>
     <record id="is_dossier_adjudicataire_search" model="ir.ui.view">
@@ -200,10 +198,8 @@
     </record>
     <record  id="is_dossier_adjudicataire_action" model="ir.actions.act_window">
         <field name="name">Adjudicataires</field>
-        <field name="res_model">is.dossier.adjudicataire</field>
-        <field name="view_type">form</field>
-        <field name="limit">200</field>
-        <field name="view_mode">tree,form</field>
+        <field name="res_model">is.dossier.adjudicataire</field>        <field name="limit">200</field>
+        <field name="view_mode">list,form</field>
     </record>
 
 
@@ -230,10 +226,10 @@
         <field name="name">is.dossier.reference.tree</field>
         <field name="model">is.dossier.reference</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name"/>
                 <field name="idreference"/>
-            </tree>
+            </list>
         </field>
     </record>
     <record id="is_dossier_reference_search" model="ir.ui.view">
@@ -248,10 +244,8 @@
     </record>
     <record  id="is_dossier_reference_action" model="ir.actions.act_window">
         <field name="name">Référence Dossier</field>
-        <field name="res_model">is.dossier.reference</field>
-        <field name="view_type">form</field>
-        <field name="limit">200</field>
-        <field name="view_mode">tree,form</field>
+        <field name="res_model">is.dossier.reference</field>        <field name="limit">200</field>
+        <field name="view_mode">list,form</field>
     </record>
 
 
@@ -319,7 +313,7 @@
                     </group>
                     <group string="Composition du contrat">
                         <field name="detail_ids" nolabel="1" context="{'dossier_id': active_id,'test':id}">
-                            <tree decoration-info="commentaire == True">
+                            <list decoration-info="commentaire == True">
                                 <field name="numligne" widget="handle"/>
                                 <field name="commentaire" invisible="1"/>
                                 <field name="phase_id"/>
@@ -332,28 +326,29 @@
                                 <field name="facture_recursif"/>
                                 <field name="montant_facture"    sum="Total"/>
                                 <field name="montant_a_facturer" sum="Total"/>
-                            </tree>
+                            </list>
                             <form>
                                 <group>
                                     <group>
                                         <field name="numligne" readonly="1"/>
                                         <field name="commentaire"/>
-                                        <field 
-                                            name="phase_id" 
-                                            attrs="{'invisible': [('commentaire','==', True)], 'required': [('commentaire','==', False)]}"
+                                        <field
+                                            name="phase_id"
+                                            invisible="commentaire"
+                                            required="not commentaire"
                                         />
                                         <field name="texte"    required="1"/>
-                                        <field name="avancement" attrs="{'invisible': [('commentaire','==', True)]}"/>
+                                        <field name="avancement" invisible="commentaire"/>
                                     </group>
-                                    <group  attrs="{'invisible': [('commentaire','==', True)]}">
+                                    <group  invisible="commentaire">
                                         <field name="nota"/>
                                         <field name="facturable"/>
-                                        <field name="a_facturer" attrs="{'invisible': [('facturable','!=', 'oui')]}"/>
-                                        <field name="facture"    attrs="{'invisible': [('facturable','!=', 'oui')]}" readonly="1"/>
-                                        <field name="facture_le" attrs="{'invisible': [('facturable','!=', 'oui')]}" readonly="1"/>
+                                        <field name="a_facturer" invisible="facturable != 'oui'"/>
+                                        <field name="facture"    invisible="facturable != 'oui'" readonly="1"/>
+                                        <field name="facture_le" invisible="facturable != 'oui'" readonly="1"/>
                                     </group>
                                 </group>
-                                <group  attrs="{'invisible': [('commentaire','==', True)]}">
+                                <group  invisible="commentaire">
                                     <group string="a">
                                         <field name="stxt1"/>
                                         <field name="montant1"/>
@@ -375,7 +370,7 @@
                                         <field name="codass4_id"/>
                                     </group>
                                 </group>
-                                <group attrs="{'invisible': [('commentaire','==', True)]}">
+                                <group invisible="commentaire">
                                     <field name="montant_ht"/>
                                 </group>
 
@@ -392,21 +387,21 @@
                             name="generer_facture_action"
                             type="object"
                             string="Générer nouvelle facture"
-                            attrs="{'invisible': [('show_generer_facture_btn','=',False)]}"
+                            invisible="not show_generer_facture_btn"
                         />
                     </group>
                     <group>
                         <field name="invoice_ids" nolabel="1">
-                            <tree decoration-danger="amount_untaxed_invoice_signed &lt; 0">
-                                <button string="Facture" name="acceder_facture_action" type="object" icon="fa-search-plus"/>
-                                <field name="number"/>
-                                <field name="date_invoice"/>
-                                <field name="date_due"/>
-                                <field name="amount_untaxed_invoice_signed"  sum="Total" string="Montant HT"/>
+                            <list decoration-danger="amount_untaxed_signed &lt; 0">
+                                <button string="Facture" title="Facture" name="acceder_facture_action" type="object" icon="zoom_in"/>
+                                <field name="name"/>
+                                <field name="invoice_date"/>
+                                <field name="invoice_date_due"/>
+                                <field name="amount_untaxed_signed"  sum="Total" string="Montant HT"/>
                                 <field name="is_montant_revision"            sum="Total"/>
                                 <field name="is_montant_hors_revision_signe" sum="Total"/>
                                 <field name="state" string="État"/>
-                            </tree>
+                            </list>
                         </field>
                     </group>
                     <group>
@@ -414,13 +409,13 @@
                     </group>
                     <group string="Heures">
                         <field name="heure_ids" nolabel="1">
-                            <tree>
+                            <list>
                                 <field name="date_travaillee"/>
                                 <field name="user_id"/>
                                 <field name="login"/>
                                 <field name="nb_heures" sum="Total"/>
                                 <field name="note"/>
-                            </tree>
+                            </list>
                         </field>
                     </group>
                 </sheet>
@@ -431,7 +426,7 @@
         <field name="name">is.dossier.contrat.tree</field>
         <field name="model">is.dossier.contrat</field>
         <field name="arch" type="xml">
-            <tree decoration-muted="state == 'termine'">
+            <list decoration-muted="state == 'termine'">
                 <field name="name"/>
                 <field name="signe"/>
                 <field name="dossier_id"/>
@@ -444,7 +439,7 @@
                 <field name="facturable_ht" sum="Total"/>
                 <field name="nb_factures"/>
                 <field name="state"/>
-            </tree>
+            </list>
         </field>
     </record>
     <record id="is_dossier_contrat_search" model="ir.ui.view">
@@ -465,26 +460,20 @@
     </record>
     <record  id="is_dossier_contrat_restant_action" model="ir.actions.act_window">
         <field name="name">Contrats en cours</field>
-        <field name="res_model">is.dossier.contrat</field>
-        <field name="view_type">form</field>
-        <field name="limit">200</field>
-        <field name="view_mode">tree,form</field>
+        <field name="res_model">is.dossier.contrat</field>        <field name="limit">200</field>
+        <field name="view_mode">list,form</field>
         <field name="domain">[('restant_ht','&gt;',0),('state','=','en_cours')]</field>
     </record>
     <record  id="is_dossier_contrat_facturable_action" model="ir.actions.act_window">
         <field name="name">Contrats facturables</field>
-        <field name="res_model">is.dossier.contrat</field>
-        <field name="view_type">form</field>
-        <field name="limit">200</field>
-        <field name="view_mode">tree,form</field>
+        <field name="res_model">is.dossier.contrat</field>        <field name="limit">200</field>
+        <field name="view_mode">list,form</field>
         <field name="domain">[('facturable_ht','&gt;',0),('state','=','en_cours')]</field>
     </record>
     <record  id="is_dossier_contrat_action" model="ir.actions.act_window">
         <field name="name">Tous les contrats</field>
-        <field name="res_model">is.dossier.contrat</field>
-        <field name="view_type">form</field>
-        <field name="limit">200</field>
-        <field name="view_mode">tree,form</field>
+        <field name="res_model">is.dossier.contrat</field>        <field name="limit">200</field>
+        <field name="view_mode">list,form</field>
         <field name="domain">[]</field>
     </record>
 
@@ -512,10 +501,10 @@
         <field name="name">is.dossier.contrat.traitance.tree</field>
         <field name="model">is.dossier.contrat.traitance</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name"/>
                 <field name="code"/>
-            </tree>
+            </list>
         </field>
     </record>
     <record id="is_dossier_contrat_traitance_search" model="ir.ui.view">
@@ -530,10 +519,8 @@
     </record>
     <record  id="is_dossier_contrat_traitance_action" model="ir.actions.act_window">
         <field name="name">Traitance contrat</field>
-        <field name="res_model">is.dossier.contrat.traitance</field>
-        <field name="view_type">form</field>
-        <field name="limit">200</field>
-        <field name="view_mode">tree,form</field>
+        <field name="res_model">is.dossier.contrat.traitance</field>        <field name="limit">200</field>
+        <field name="view_mode">list,form</field>
     </record>
 
 
@@ -559,11 +546,11 @@
         <field name="name">is.dossier.contrat.phase.tree</field>
         <field name="model">is.dossier.contrat.phase</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="txt_phase"/>
                 <field name="det_phase"/>
                 <field name="ref_phase"/>
-            </tree>
+            </list>
         </field>
     </record>
     <record id="is_dossier_contrat_phase_search" model="ir.ui.view">
@@ -579,10 +566,8 @@
     </record>
     <record  id="is_dossier_contrat_phase_action" model="ir.actions.act_window">
         <field name="name">Phase Contrat</field>
-        <field name="res_model">is.dossier.contrat.phase</field>
-        <field name="view_type">form</field>
-        <field name="limit">200</field>
-        <field name="view_mode">tree,form</field>
+        <field name="res_model">is.dossier.contrat.phase</field>        <field name="limit">200</field>
+        <field name="view_mode">list,form</field>
     </record>
 
 
@@ -608,11 +593,11 @@
         <field name="name">is.dossier.code.assurance.tree</field>
         <field name="model">is.dossier.code.assurance</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="code"/>
                 <field name="description"/>
                 <field name="ordre"/>
-            </tree>
+            </list>
         </field>
     </record>
     <record id="is_dossier_code_assurance_search" model="ir.ui.view">
@@ -627,10 +612,8 @@
     </record>
     <record  id="is_dossier_code_assurance_action" model="ir.actions.act_window">
         <field name="name">Code assurance</field>
-        <field name="res_model">is.dossier.code.assurance</field>
-        <field name="view_type">form</field>
-        <field name="limit">200</field>
-        <field name="view_mode">tree,form</field>
+        <field name="res_model">is.dossier.code.assurance</field>        <field name="limit">200</field>
+        <field name="view_mode">list,form</field>
     </record>
 
 
@@ -653,9 +636,9 @@
                         <field name="avancement"/>
                         <field name="nota"/>
                         <field name="facturable"/>
-                        <field name="a_facturer" attrs="{'invisible': [('facturable','!=', 'oui')]}"/>
-                        <field name="facture"    attrs="{'invisible': [('facturable','!=', 'oui')]}" readonly="1"/>
-                        <field name="facture_le" attrs="{'invisible': [('facturable','!=', 'oui')]}" readonly="1"/>
+                        <field name="a_facturer" invisible="facturable != 'oui'"/>
+                        <field name="facture"    invisible="facturable != 'oui'" readonly="1"/>
+                        <field name="facture_le" invisible="facturable != 'oui'" readonly="1"/>
                     </group>
                     <group>
                         <group string="a">
@@ -690,7 +673,7 @@
         <field name="name">is.dossier.contrat.detail.tree</field>
         <field name="model">is.dossier.contrat.detail</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="contrat_id"/>
                 <field name="numligne"/>
                 <field name="phase_id"/>
@@ -702,7 +685,7 @@
                 <field name="a_facturer"/>
                 <field name="facture"/>
                 <field name="facture_le"/>
-            </tree>
+            </list>
         </field>
     </record>
     <record id="is_dossier_contrat_detail_search" model="ir.ui.view">
@@ -723,10 +706,8 @@
     </record>
     <record  id="is_dossier_contrat_detail_action" model="ir.actions.act_window">
         <field name="name">Détail contrat</field>
-        <field name="res_model">is.dossier.contrat.detail</field>
-        <field name="view_type">form</field>
-        <field name="limit">200</field>
-        <field name="view_mode">tree,form</field>
+        <field name="res_model">is.dossier.contrat.detail</field>        <field name="limit">200</field>
+        <field name="view_mode">list,form</field>
     </record>
 
 
@@ -735,7 +716,7 @@
         <field name="name">is_dossier_contrat_detail_maf_tree</field>
         <field name="model">is.dossier.contrat.detail</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="contrat_id"/>
                 <field name="numligne"/>
                 <field name="phase_id"/>
@@ -748,15 +729,13 @@
                 <field name="codass3_id"/>
                 <field name="montant4" sum="Total"/>
                 <field name="codass4_id"/>
-            </tree>
+            </list>
         </field>
     </record>
     <record  id="is_dossier_contrat_detail_maf_action" model="ir.actions.act_window">
         <field name="name">Détail contrat MAF</field>
-        <field name="res_model">is.dossier.contrat.detail</field>
-        <field name="view_type">form</field>
-        <field name="limit">200</field>
-        <field name="view_mode">tree,form</field>
+        <field name="res_model">is.dossier.contrat.detail</field>        <field name="limit">200</field>
+        <field name="view_mode">list,form</field>
         <field name="view_id" ref="is_dget20.is_dossier_contrat_detail_maf_tree"/>
     </record>
 
@@ -766,7 +745,7 @@
         <field name="name">is_dossier_contrat_detail_facturable_tree</field>
         <field name="model">is.dossier.contrat.detail</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="contrat_id"/>
                 <field name="numligne"/>
                 <field name="phase_id"/>
@@ -774,15 +753,13 @@
                 <field name="facture_recursif"   sum="Total"/>
                 <field name="montant_facture"    sum="Total"/>
                 <field name="montant_a_facturer" sum="Total"/>
-            </tree>
+            </list>
         </field>
     </record>
     <record  id="is_dossier_contrat_detail_facturable_action" model="ir.actions.act_window">
         <field name="name">Détail contrat Facturable</field>
-        <field name="res_model">is.dossier.contrat.detail</field>
-        <field name="view_type">form</field>
-        <field name="limit">200</field>
-        <field name="view_mode">tree,form</field>
+        <field name="res_model">is.dossier.contrat.detail</field>        <field name="limit">200</field>
+        <field name="view_mode">list,form</field>
         <field name="view_id" ref="is_dget20.is_dossier_contrat_detail_facturable_tree"/>
     </record>
 
@@ -791,7 +768,7 @@
         <field name="name">is_dossier_contrat_detail_encours_a_facturer_tree</field>
         <field name="model">is.dossier.contrat.detail</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="contrat_id"/>
                 <field name="dossier_id"/>
                 <field name="description"/>
@@ -809,15 +786,13 @@
                 <field name="montant_restant" sum="Total"/>
                 <field name="facturable" invisible="1"/>
                 <field name="state"      invisible="1"/>
-            </tree>
+            </list>
         </field>
     </record>
     <record  id="is_dossier_contrat_detail_encours_a_facturer_action" model="ir.actions.act_window">
         <field name="name">Détail contrat Encours + A facturer</field>
-        <field name="res_model">is.dossier.contrat.detail</field>
-        <field name="view_type">form</field>
-        <field name="limit">1000</field>
-        <field name="view_mode">tree,form</field>
+        <field name="res_model">is.dossier.contrat.detail</field>        <field name="limit">1000</field>
+        <field name="view_mode">list,form</field>
         <field name="view_id" ref="is_dget20.is_dossier_contrat_detail_encours_a_facturer_tree"/>
         <field name="domain">[
             ('facturable','=','oui'),
@@ -856,14 +831,14 @@
         <field name="name">is.salarie.heure.tree</field>
         <field name="model">is.salarie.heure</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="date_travaillee"/>
                 <field name="user_id"/>
                 <field name="login"/>
                 <field name="contrat_id"/>
                 <field name="nb_heures" sum="Total"/>
                 <field name="note"/>
-            </tree>
+            </list>
         </field>
     </record>
     <record id="is_salarie_heure_search" model="ir.ui.view">
@@ -881,10 +856,8 @@
     </record>
     <record  id="is_salarie_heure_action" model="ir.actions.act_window">
         <field name="name">Heures des salariés</field>
-        <field name="res_model">is.salarie.heure</field>
-        <field name="view_type">form</field>
-        <field name="limit">200</field>
-        <field name="view_mode">tree,form</field>
+        <field name="res_model">is.salarie.heure</field>        <field name="limit">200</field>
+        <field name="view_mode">list,form</field>
     </record>
 
 
@@ -919,9 +892,9 @@
         <field name="name">is.declaration.maf.tree</field>
         <field name="model">is.declaration.maf</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name"/>
-            </tree>
+            </list>
         </field>
     </record>
     <record id="is_declaration_maf_search" model="ir.ui.view">
@@ -935,10 +908,8 @@
     </record>
     <record  id="is_declaration_maf_action" model="ir.actions.act_window">
         <field name="name">Déclaration MAF</field>
-        <field name="res_model">is.declaration.maf</field>
-        <field name="view_type">form</field>
-        <field name="limit">200</field>
-        <field name="view_mode">tree,form</field>
+        <field name="res_model">is.declaration.maf</field>        <field name="limit">200</field>
+        <field name="view_mode">list,form</field>
     </record>
 
 
@@ -964,13 +935,13 @@
                     </group>
                     <group>
                         <field name="qui_ids" nolabel="1">
-                            <tree editable="bottom">
+                            <list editable="bottom">
                                 <field name="nom"/>
                                 <field name="dateenvoi"/>
                                 <field name="retenu"/>
                                 <field name="gagne"/>
                                 <field name="equipes"/>
-                            </tree>
+                            </list>
                         </field>
                     </group>
                 </sheet>
@@ -981,7 +952,7 @@
         <field name="name">is.concours.tree</field>
         <field name="model">is.concours</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="numconcours"/>
                 <field name="organisme_id"/>
                 <field name="nom"/>
@@ -991,7 +962,7 @@
                 <field name="daterendu"/>
                 <field name="journal"/>
                 <field name="lienannonce"/>
-            </tree>
+            </list>
         </field>
     </record>
     <record id="is_concours_search" model="ir.ui.view">
@@ -1011,10 +982,8 @@
     </record>
     <record  id="is_concours_action" model="ir.actions.act_window">
         <field name="name">Concours</field>
-        <field name="res_model">is.concours</field>
-        <field name="view_type">form</field>
-        <field name="limit">200</field>
-        <field name="view_mode">tree,form</field>
+        <field name="res_model">is.concours</field>        <field name="limit">200</field>
+        <field name="view_mode">list,form</field>
     </record>
 
 

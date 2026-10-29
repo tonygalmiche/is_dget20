@@ -25,7 +25,7 @@ InfoSaône - Module Odoo 20 pour DGET
         'security/ir.access.csv',
         # Vues, menus et rapports pas encore migrés : mis en commentaire pour installer d'abord les modèles, à réactiver un par un
         'views/res_partner_views.xml',
-        # 'views/is_dossier_views.xml',
+        'views/is_dossier_views.xml',
         # 'views/account_invoice_view.xml',
         # 'views/is_account_invoice_line_views.xml',
         # 'views/menu.xml',

@@ -78,7 +78,7 @@ class IsDossier(models.Model):
             obj.display_name = str(obj.numaff)+u' - '+str(obj.nom)
 
 
-    def creation_contrat_action(self, vals):
+    def creation_contrat_action(self, vals=False):
         for obj in self:
             res= {
                 'name': 'Contrat',
@@ -273,7 +273,7 @@ class IsDossierContrat(models.Model):
             obj.anomalie = anomalie
         t_end = datetime.now()
 
-    def acceder_contrat_action(self, vals):
+    def acceder_contrat_action(self, vals=False):
         for obj in self:
             res= {
                 'name': 'Contrat',
@@ -285,7 +285,7 @@ class IsDossierContrat(models.Model):
             return res
 
 
-    def generer_facture_action(self, vals):
+    def generer_facture_action(self, vals=False):
         for obj in self:
 
             if not obj.show_generer_facture_btn:
