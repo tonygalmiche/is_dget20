@@ -1,24 +1,24 @@
 # -*- coding: utf-8 -*-
 {
-    'name'     : 'InfoSaône - Module Odoo 12 pour DGET',
-    'version'  : '0.1',
+    'name'     : 'InfoSaône - Module Odoo 20 pour DGET',
+    'version'  : '20.0.0.1',
     'author'   : 'InfoSaône',
     'category' : 'InfoSaône',
     'description': """
-InfoSaône - Module Odoo 12 pour DGET
+InfoSaône - Module Odoo 20 pour DGET
 ===================================================
 """,
     'maintainer' : 'InfoSaône',
     'website'    : 'http://www.infosaone.com',
     'depends'    : [
         'base',
-        'base_vat',
         'account',
-        'l10n_fr',
+        'l10n_fr_account',
         'sale',
         'purchase',
-        'document',
         'product',
+        'is_theme_entreprise',  # couleur de l'entreprise (module générique)
+        'is_interface_epuree',  # page de connexion épurée, inscription sur invitation (module générique)
     ],
     'data' : [
         'security/res.groups.xml',
@@ -36,7 +36,5 @@ InfoSaône - Module Odoo 12 pour DGET
     ],
     'installable': True,
     'application': True,
-    'qweb': [
-    ],
+    'license': 'AGPL-3',
 }
-
