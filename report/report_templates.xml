@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="is_external_layout_standard" name="is_external_layout_standard" inherit_id="web.external_layout_standard">
-        <xpath expr="//div[hasclass('header')]" position="replace">
-            <div class="header">
-                <div class="row">
-                    <div class="col-12" style="text-align:center">
-                        <img t-att-src="'/is_dget20/static/src/img/bandeau-dget.png'" style="width:100%"/>
-                    </div>
-                </div>
+        <!-- v20 : seul le tableau de l'en-tête est remplacé (et non le bloc header) : account_edi_ubl_cii
+             hérite aussi de ce tableau (//div[contains(@t-attf-class, 'header')]/table) -->
+        <xpath expr="//div[contains(@t-attf-class, ' header')]/table" position="replace">
+            <table class="table-borderless w-100"><tr><td style="text-align:center">
+                <img t-att-src="'/is_dget20/static/src/img/bandeau-dget.png'" style="width:100%"/>
+            </td></tr></table>
+        </xpath>
+        <!-- Corps sans le bloc d'adresse standard, comme en v12 (v20 : web.external_layout_body) -->
+        <xpath expr="//t[@t-call='web.external_layout_body']" position="replace">
+            <div t-attf-class="o_company_#{company.id}_layout article o_report_layout_standard" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')">
+                <t t-out="0"/>
             </div>
         </xpath>
-        <xpath expr="//div[hasclass('o_report_layout_standard')]" position="replace">
-            <div class="article o_report_layout_standard"  t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id">
-                <t t-raw="0"/>
-            </div>
-        </xpath>
-        <xpath expr="//div[hasclass('footer')]" position="replace">
-            <style>
-            </style>
-            <div class="footer o_standard_footer">
+        <xpath expr="//div[starts-with(@t-attf-class, 'footer ')]" position="replace">
+            <!-- Dans l'aperçu de « Configurer la mise en page », company est l'assistant base.document.layout : champs lus sur la société -->
+            <t t-set="societe" t-value="company.company_id if company._name == 'base.document.layout' else company"/>
+            <div t-attf-class="footer o_standard_footer o_company_#{company.id}_layout {{report_type != 'pdf' and 'mt-auto'}}">
                 <table style="width:100%;font-size:8pt;border-top: 1px solid black;margin-top:3mm">
                     <tr>
                         <td style="width:90%">
-                            <span t-field="company.street"/> - 
-                            <span t-field="company.street2"/> - 
-                            <span t-field="company.zip"/> <span t-field="company.city"/> - 
-                            Tél : <span t-field="company.phone"/> - 
-                            <span t-field="company.website"/> - 
-                            <span t-field="company.email"/><br />
-                            TVA intracommunautaire : <span t-field="company.vat"/> - 
-                            SIRET : <span t-field="company.siret"/> - 
-                            <span t-field="company.ape"/><br />
-                            <span t-field="company.company_registry"/>
+                            <span t-field="societe.street"/> -
+                            <span t-field="societe.street2"/> -
+                            <span t-field="societe.zip"/> <span t-field="societe.city"/> -
+                            Tél : <span t-field="societe.phone"/> -
+                            <span t-field="societe.website"/> -
+                            <span t-field="societe.email"/><br />
+                            TVA intracommunautaire : <span t-field="societe.vat"/> -
+                            SIRET : <span t-out="societe.l10n_fr_siret"/> -
+                            <span t-field="societe.ape"/><br />
+                            <!-- company_registry supprimé en v20 : texte de dget12 repris tel quel -->
+                            SAS au capital de 40 000 € - RCS DIJON - B 350 124 590
                         </td>
                         <td style="text-align:right;vertical-align:middle">
                             Page <span class="page"/> / <span class="topage"/>
