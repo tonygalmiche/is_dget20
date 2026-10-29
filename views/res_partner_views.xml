@@ -7,29 +7,34 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
-            <field name="vat" position="after">
-                <field name="is_prefixe" attrs="{'invisible': [('is_company','=', False)]}"/>
-                <field name="is_numero" attrs="{
-                    'invisible': [('is_company','=', False)],
-                    'readonly': True,
-                }"/>
-                <field name="is_numero_fournisseur" attrs="{
-                    'invisible': [('is_company','=', False)],
-                    'readonly': True,
-                }"/>
-                <field name="is_service"                   attrs="{'invisible': [('is_company','=', False)]}"/>
-                <field name="is_contact"                   attrs="{'invisible': ['|',('is_company','=', False),('supplier','=', False)]}"/>
-                <field name="is_classement_id"             attrs="{'invisible': ['|',('is_company','=', False),('customer','=', False)]}"/>
-                <field name="is_classement_principal_id"   attrs="{'invisible': ['|',('is_company','=', False),('supplier','=', False)]}"/>
-                <field name="is_classement_secondaire_id"  attrs="{'invisible': ['|',('is_company','=', False),('supplier','=', False)]}"/>
-                <field name="is_classement_tertiaire_id"   attrs="{'invisible': ['|',('is_company','=', False),('supplier','=', False)]}"/>
-                <field name="is_specialite_ids"            attrs="{'invisible': ['|',('is_company','=', False),('customer','=', False)]}"  widget="many2many_tags"/>
-            </field>
+            <!-- v20 : vat dans div[@name='identifiers'], sans libellé -->
+            <xpath expr="//div[@name='identifiers']" position="after">
+                <field name="is_prefixe" invisible="not is_company"/>
+                <field name="is_numero" invisible="not is_company" readonly="1"/>
+                <field name="is_numero_fournisseur" invisible="not is_company" readonly="1"/>
+                <field name="is_service"                   invisible="not is_company"/>
+                <field name="is_contact"                   invisible="not is_company or not is_fournisseur"/>
+                <field name="is_classement_id"             invisible="not is_company or not is_client"/>
+                <field name="is_classement_principal_id"   invisible="not is_company or not is_fournisseur"/>
+                <field name="is_classement_secondaire_id"  invisible="not is_company or not is_fournisseur"/>
+                <field name="is_classement_tertiaire_id"   invisible="not is_company or not is_fournisseur"/>
+                <field name="is_specialite_ids"            invisible="not is_company or not is_client"  widget="many2many_tags"/>
+            </xpath>
             <field name="website" position="after">
-                <field name="is_acces_pro_url"     attrs="{'invisible': ['|',('is_company','=', False),('supplier','=', False)]}"  widget="url"/>
-                <field name="is_acces_pro_login"   attrs="{'invisible': ['|',('is_company','=', False),('supplier','=', False)]}"/>
-                <field name="is_acces_pro_pwd"     attrs="{'invisible': ['|',('is_company','=', False),('supplier','=', False)]}"/>
+                <field name="is_acces_pro_url"     invisible="not is_company or not is_fournisseur"  widget="url"/>
+                <field name="is_acces_pro_login"   invisible="not is_company or not is_fournisseur"/>
+                <field name="is_acces_pro_pwd"     invisible="not is_company or not is_fournisseur"/>
             </field>
+            <!-- v20 : title (supprimé) et customer / supplier (supprimés en v13) recréés, aux mêmes places qu'en v12 -->
+            <xpath expr="(//field[@name='function'])[1]" position="after">
+                <field name="is_titre_id" options="{'no_open': True}" invisible="is_company"/>
+            </xpath>
+            <group name="sale" position="inside">
+                <field name="is_client"/>
+            </group>
+            <group name="purchase" position="inside">
+                <field name="is_fournisseur"/>
+            </group>
         </field>
     </record>
     <record model="ir.ui.view" id="is_view_partner_tree">
@@ -38,7 +43,8 @@
         <field name="inherit_id" ref="base.view_partner_tree"/>
         <field name="arch" type="xml">
             <field name="email" position="replace"/>
-            <field name="display_name" position="before">
+            <field name="city" position="replace"/>
+            <field name="complete_name" position="before">
                 <field name="is_classement_id"/>
                 <field name="is_specialite_ids" widget="many2many_tags"/>
                 <field name="is_prefixe"/>
@@ -64,14 +70,20 @@
                 <field name="is_classement_secondaire_id"/>
                 <field name="is_classement_tertiaire_id"/>
             </field>
+            <!-- v20 : filtres standard v12 Clients, Fournisseurs et Sociétés (supprimés), sur les champs recréés -->
+            <filter name="inactive" position="before">
+                <filter string="Sociétés"     name="type_company" domain="[('is_company', '=', True)]"/>
+                <filter string="Clients"      name="customer"     domain="[('is_client', '=', True)]"/>
+                <filter string="Fournisseurs" name="supplier"     domain="[('is_fournisseur', '=', True)]"/>
+                <separator/>
+            </filter>
         </field>
     </record>
     <record  id="is_adresses_action" model="ir.actions.act_window">
         <field name="name">Adresses</field>
         <field name="res_model">res.partner</field>
-        <field name="view_type">form</field>
         <field name="limit">200</field>
-        <field name="view_mode">tree,kanban,form,activity</field>
+        <field name="view_mode">list,kanban,form,activity</field>
         <field name="context">{"search_default_customer":1}</field>
     </record>
 
@@ -83,25 +95,24 @@
         <field name="model">res.partner</field>
         <field name="priority" eval="99"/>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name"/>
                 <field name="is_classement_principal_id"/>
                 <field name="zip"/>
                 <field name="city"/>
                 <field name="phone"/>
                 <field name="website"/>
-            </tree>
+            </list>
         </field>
     </record>
     <record  id="is_documentation_action" model="ir.actions.act_window">
         <field name="name">Documentation</field>
         <field name="res_model">res.partner</field>
-        <field name="view_type">form</field>
         <field name="limit">200</field>
-        <field name="view_mode">tree,kanban,form,activity</field>
+        <field name="view_mode">list,kanban,form,activity</field>
         <field name="view_id" ref="is_res_partner_documentation_tree"/>
-        <field name="domain">[('supplier','=', True)]</field>
-        <field name="context">{'search_default_type_company': 1,'default_customer': 0,'default_supplier': 1, 'default_is_company': True}</field>
+        <field name="domain">[('is_fournisseur','=', True)]</field>
+        <field name="context">{'search_default_type_company': 1,'default_is_client': 0,'default_is_fournisseur': 1, 'default_is_company': True}</field>
     </record>
 
 
@@ -128,9 +139,9 @@
         <field name="name">is.classement.tree</field>
         <field name="model">is.classement</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name"/>
-            </tree>
+            </list>
         </field>
     </record>
     <record id="is_classement_search" model="ir.ui.view">
@@ -145,9 +156,8 @@
     <record  id="is_classement_action" model="ir.actions.act_window">
         <field name="name">Classement</field>
         <field name="res_model">is.classement</field>
-        <field name="view_type">form</field>
         <field name="limit">200</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
 
@@ -173,11 +183,11 @@
         <field name="name">is.classement.fournisseur.tree</field>
         <field name="model">is.classement.fournisseur</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="code"/>
                 <field name="nature"/>
                 <field name="classement"/>
-            </tree>
+            </list>
         </field>
     </record>
     <record id="is_classement_fournisseur_search" model="ir.ui.view">
@@ -194,9 +204,8 @@
     <record  id="is_classement_fournisseur_action" model="ir.actions.act_window">
         <field name="name">Classement Fournisseur</field>
         <field name="res_model">is.classement.fournisseur</field>
-        <field name="view_type">form</field>
         <field name="limit">200</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
 
@@ -220,9 +229,9 @@
         <field name="name">is.specialite.tree</field>
         <field name="model">is.specialite</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name"/>
-            </tree>
+            </list>
         </field>
     </record>
     <record id="is_specialite_search" model="ir.ui.view">
@@ -237,18 +246,43 @@
     <record  id="is_specialite_action" model="ir.actions.act_window">
         <field name="name">Spécialité</field>
         <field name="res_model">is.specialite</field>
-        <field name="view_type">form</field>
         <field name="limit">200</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
 
+    <!-- is.titre (v20 : remplace res.partner.title, supprimé ; mêmes champs que ses vues standard v12) -->
+    <record id="is_titre_form" model="ir.ui.view">
+        <field name="name">is.titre.form</field>
+        <field name="model">is.titre</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="shortcut"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="is_titre_tree" model="ir.ui.view">
+        <field name="name">is.titre.tree</field>
+        <field name="model">is.titre</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="shortcut"/>
+            </list>
+        </field>
+    </record>
     <record  id="is_res_partner_title_action" model="ir.actions.act_window">
         <field name="name">Titre</field>
-        <field name="res_model">res.partner.title</field>
-        <field name="view_type">form</field>
+        <field name="res_model">is.titre</field>
         <field name="limit">200</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
 

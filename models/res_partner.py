@@ -18,6 +18,16 @@ class IsSpecialite(models.Model):
     name = fields.Char("Spécialité", required=True, index=True)
 
 
+class IsTitre(models.Model):
+    _name = 'is.titre'
+    _description = "Titre"
+    _order = 'name'
+
+    # v20 : res.partner.title supprimé, recréé à l'identique
+    name     = fields.Char("Titre", required=True, translate=True)
+    shortcut = fields.Char("Abréviation", translate=True)
+
+
 class IsClassementFournisseur(models.Model):
     _name = 'is.classement.fournisseur'
     _description = "Classement Fournisseur"
@@ -51,6 +61,18 @@ class ResPartner(models.Model):
     is_acces_pro_url             = fields.Char(u"Accès pro au Site internet")
     is_acces_pro_login           = fields.Char(u"Login accès pro")
     is_acces_pro_pwd             = fields.Char(u"Mot de passe accès pro")
+    # v20 : customer, supplier (supprimés en v13) et title (supprimé en v20) recréés à l'identique
+    is_client                    = fields.Boolean(u"Client")
+    is_fournisseur               = fields.Boolean(u"Fournisseur")
+    is_titre_id                  = fields.Many2one('is.titre', u"Titre")
+
+
+    # En v20, is_company est calculé (sans parent et avec un n° de TVA) : redevient une case à cocher
+    is_company = fields.Boolean(string='Société', readonly=False)
+
+    def _compute_is_company(self):
+        for partner in self:
+            partner.is_company = partner.is_company
 
 
     # Permet de désactiver le controle de la TVA
