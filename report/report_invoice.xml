@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="is_report_invoice_document" name="is_report_invoice_document" inherit_id="account.report_invoice_document">
+            <xpath expr="//div[hasclass('page')]" position="replace">
+                <div class="page">
+                    <style>
+                        table {
+                            border:0;
+                        }
+                        td,th{
+                            font-size:10pt;
+                            border-width:1px;
+                            border-style:solid; 
+                            border-color:gray;
+                            padding:0;
+                            margin:0;
+                            padding-left:1mm;
+                            padding-right:1mm;
+                        }
+                        .titre{
+                            font-size:18pt;
+                            font-weight: bold;
+                            text-align: center;
+                            background-color: #e6e6e6;
+                            border-top: 1px solid black;
+                            border-bottom: 1px solid black;
+                        }
+                    </style>
+                    <div style="height:20mm"/>
+
+                    <table style="width:100%">
+                        <tr>
+                            <td style="border:none;width:110mm"></td>
+                            <td style="border: 1px solid gray;padding:5mm">
+                                <b>
+                                    <t t-if="o.partner_id.name"><span class="rs" t-field="o.partner_id.name"/><br /></t>
+                                    <t t-if="o.partner_id.street"><span t-field="o.partner_id.street"/><br /></t>
+                                    <t t-if="o.partner_id.street2"><span t-field="o.partner_id.street2"/><br /></t>
+                                    <t t-if="o.partner_id.zip"><span t-field="o.partner_id.zip"/> </t>
+                                    <t t-if="o.partner_id.city"><span t-field="o.partner_id.city"/><br /></t>
+                                </b>
+                            </td>
+                        </tr>
+                    </table>
+                    <br />
+                    <div class="titre">
+                        <span t-if="o.type == 'out_invoice' and o.state in ('open', 'in_payment', 'paid')">Facture n°</span>
+                        <span t-if="o.type == 'out_invoice' and o.state == 'draft'">Facture brouillon n°</span>
+                        <span t-if="o.type == 'out_invoice' and o.state == 'cancel'">Facture annulée n°</span>
+                        <span t-if="o.type == 'out_refund'">Avoir n°</span>
+                        <span t-if="o.type == 'in_refund'">Avoir n°</span>
+                        <span t-if="o.type == 'in_invoice'">Facture fournisseur n°</span>
+                        <span t-field="o.number"/>
+                    </div>
+
+                    <div style="height:3mm"/>
+
+                    <table style="width:100%">
+                        <tr>
+                            <td style="width:40%">
+                                Opération
+                            </td>
+                            <td>
+                                <b><span t-field="o.is_dossier_id.nom"/> à <span t-field="o.is_dossier_id.lieu"/></b>
+                            </td>
+                        </tr>
+                        <tr t-if="o.is_contrat_id.refclient">
+                            <td>
+                                Numéro contrat client
+                            </td>
+                            <td>
+                                <span t-field="o.is_contrat_id.refclient"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Numéro contrat DGET
+                            </td>
+                            <td>
+                                <span t-field="o.is_contrat_id.name"/>
+                            </td>
+                        </tr>
+                        <tr t-if="o.is_contrat_id.description">
+                            <td>
+                                Libellé du contrat
+                            </td>
+                            <td>
+                                <span t-field="o.is_contrat_id.description"/>
+                            </td>
+                        </tr>
+                        <tr t-if="o.is_dossier_id.service_executant">
+                            <td>
+                                Service exécutant
+                            </td>
+                            <td>
+                                <span t-field="o.is_dossier_id.service_executant"/>
+                            </td>
+                        </tr>
+                        <tr t-if="o.is_dossier_id.num_marche">
+                            <td>
+                                N° marché
+                            </td>
+                            <td>
+                                <span t-field="o.is_dossier_id.num_marche"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Date de la facture
+                            </td>
+                            <td>
+                                <span t-field="o.date_invoice"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Conditions de réglement
+                            </td>
+                            <td>
+                                à votre convenance
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Date d'échéance
+                            </td>
+                            <td>
+                                <span t-field="o.date_due"/>
+                            </td>
+                        </tr>
+
+                        <tr t-if="o.partner_id.vat">
+                            <td>
+                                Votre n° TVA intracommunautaire
+                            </td>
+                            <td>
+                                <span t-field="o.partner_id.vat"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Notre n° TVA intracommunautaire
+                            </td>
+                            <td>
+                                <span t-field="o.company_id.vat"/>
+                            </td>
+                        </tr>
+                    </table>
+                    <div style="height:3mm"/>
+                    <div t-if="o.is_alerte" style="background:orange;font-weight: bold;" t-field="o.is_alerte"/>
+                    <table style="width:100%">
+                        <thead>
+                            <tr>
+                                <th class="text-left"><span>Récapitulatif de l'avancement du contrat</span></th>
+                                <th class="text-right" style="white-space: nowrap;">Montants contrat</th>
+                                <th class="text-center"><span>% réalisés</span></th>
+                                <th class="text-right" style="white-space: nowrap;">Montants réalisés</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-set="total1" t-value="0.0"/>
+                            <t t-set="total2" t-value="0.0"/>
+                            <t t-foreach="o.invoice_line_ids" t-as="line">
+                                <tr>
+                                    <t t-if="line.display_type=='line_note'">
+                                        <td colspan="4" style="background-color:#eaeded">
+                                            <b><span t-field="line.name"/></b>
+                                        </td>
+                                    </t>
+                                    <t t-if="line.display_type!='line_note'">
+                                        <t t-if="line.product_id.name!='Facture' and line.product_id.name!='Révisions'">
+                                            <t t-set="quantity" t-value="line.quantity*100.0"/>
+                                            <t t-set="total1" t-value="total1+line.price_unit"/>
+                                            <t t-set="total2" t-value="total2+line.price_subtotal"/>
+                                            <td>
+                                                <span t-field="line.name"/>
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-esc="line.price_unit" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-esc="'{0:,.4f}'.format(quantity).replace(',', ' ').replace('.', ',')"/> %
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-esc="line.price_subtotal" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                            </td>
+                                        </t>
+                                    </t>
+                                </tr>
+                            </t>
+                            <tr>
+                                <th class="text-right">TOTAUX</th>
+                                <th class="text-right"><span t-esc="abs(total1)" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></th>
+                                <th></th>
+                                <th class="text-right"><span t-esc="abs(total2)" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></th>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                    <!-- Recherche si il existe des factures précédentes -->
+                    <t t-set="total_revision" t-value="0.0"/>
+                    <t t-set="nb_factures" t-value="0"/>
+                    <t t-foreach="o.invoice_line_ids" t-as="line">
+                        <t t-if="line.product_id.name=='Facture'">
+                            <t t-set="nb_factures" t-value="nb_factures+1"/>
+                            <t t-set="total_revision" t-value="total_revision+line.is_invoice_id.is_montant_revision"/>
+                        </t>
+                    </t>
+
+                    <!-- Recherche des révisions -->
+                    <t t-set="revision" t-value="0.0"/>
+                    <t t-foreach="o.invoice_line_ids" t-as="line">
+                        <t t-if="line.product_id.name=='Révisions'">
+                            <t t-set="revision" t-value="revision+line.price_subtotal"/>
+                        </t>
+                    </t>
+
+                    <t t-set="total3"         t-value="0.0"/>
+                    <t t-if="nb_factures">
+                        <div style="height:3mm"/>
+                        <table style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th class="text-center"><span>Historique de facturation</span></th>
+                                    <th class="text-center">Date</th>
+                                    <th class="text-right" t-if="total_revision">Montant hors révision</th>
+                                    <th class="text-right" t-if="total_revision">Révision</th>
+                                    <th class="text-right">Montant facturé</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="o.invoice_line_ids" t-as="line">
+                                    <tr>
+                                        <t t-if="line.product_id.name=='Facture'">
+                                            <t t-set="montant" t-value="-line.price_subtotal"/>
+                                            <t t-set="total3" t-value="total3-line.price_subtotal"/>
+                                            <td>
+                                                <t t-if="line.is_invoice_id.type=='out_refund'">
+                                                    Avoir n°<span t-field="line.name"/>
+                                                </t>
+                                                <t t-if="line.is_invoice_id.type!='out_refund'">
+                                                    Facture n°<span t-field="line.name"/>
+                                                </t>
+                                            </td>
+                                            <td class="text-center">
+                                                <span t-field="line.is_invoice_id.date_invoice"/>
+                                            </td>
+                                            <td class="text-right" t-if="total_revision">
+                                                <span t-esc="line.is_invoice_id.is_montant_hors_revision" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                            </td>
+                                            <td class="text-right" t-if="total_revision">
+                                                <span t-esc="line.is_invoice_id.is_montant_revision" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-esc="montant" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                            </td>
+
+                                        </t>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </t>
+                    <div style="height:3mm"/>
+                    <table style="width:100%">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    Montant réalisé au <span t-field="o.date_invoice"/>
+                                </td>
+                                <td class="text-right">
+                                    <span t-esc="'{0:,.2f}'.format(abs(total2)).replace(',', ' ').replace('.', ',')"/> €
+                                </td>
+                            </tr>
+                            <tr t-if="total3">
+                                <td class="text-left">Total déjà facturé</td>
+                                <td class="text-right"><span t-esc="'{0:,.2f}'.format(total3).replace(',', ' ').replace('.', ',')"/> €</td>
+                            </tr>
+
+                            <!-- Facture -->
+                            <t t-if="o.type!='out_refund'">
+                                <tr t-if="total3">
+                                    <td class="text-left">Sous-total</td>
+                                    <td class="text-right"><span t-esc="'{0:,.2f}'.format(total2-total3).replace(',', ' ').replace('.', ',')"/> €</td>
+                                </tr>
+                                <tr t-if="total_revision">
+                                    <td class="text-left">Total des révisions déjà facturées</td>
+                                    <td class="text-right"><span t-esc="'{0:,.2f}'.format(total_revision).replace(',', ' ').replace('.', ',')"/> €</td>
+                                </tr>
+                                <tr t-if="revision">
+                                    <td class="text-left">Révision sur cette facture</td>
+                                    <td class="text-right"><span t-esc="'{0:,.2f}'.format(revision).replace(',', ' ').replace('.', ',')"/> €</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-left">Montant H.T. de la présente facture</th>
+                                    <th class="text-right"><span t-field="o.amount_untaxed"/></th>
+                                </tr>
+                                <t t-foreach="o.amount_by_group" t-as="amount_by_group">
+                                    <tr>
+                                        <th class="text-left"><span t-esc="amount_by_group[0]"/></th>
+                                        <th class="text-right"><span t-esc="amount_by_group[3]"/></th>
+                                    </tr>
+                                </t>
+                                <tr>
+                                    <th class="text-left">Montant T.T.C. à régler</th>
+                                    <th class="text-right"><span t-field="o.amount_total"/></th>
+                                </tr>
+                            </t>
+
+                            <!-- Avoir -->
+                            <t t-if="o.type=='out_refund'">
+                                <tr t-if="total_revision">
+                                    <td class="text-left">Total des révisions déjà facturées</td>
+                                    <td class="text-right"><span t-esc="'{0:,.2f}'.format(total_revision).replace(',', ' ').replace('.', ',')"/> €</td>
+                                </tr>
+                                <tr t-if="revision">
+                                    <td class="text-left">Révision sur cette facture</td>
+                                    <td class="text-right"><span t-esc="'{0:,.2f}'.format(revision).replace(',', ' ').replace('.', ',')"/> €</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-left">Montant H.T. de cet avoir</th>
+                                    <th class="text-right"><span t-esc="-o.amount_untaxed" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></th>
+                                </tr>
+                                <t t-foreach="o.amount_by_group" t-as="amount_by_group">
+                                    <tr>
+                                        <th class="text-left"><span t-esc="amount_by_group[0]"/></th>
+                                        <th class="text-right">-<span t-esc="amount_by_group[3]"/></th>
+                                    </tr>
+                                </t>
+                                <tr>
+                                    <th class="text-left">Montant T.T.C. avoir</th>
+                                    <th class="text-right"><span t-esc="-o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></th>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+
+                    <t t-if="abs(o.amount_untaxed-(total2-total3+revision))>0.05">
+                        <br />
+                        <div style="background-color:red;font-weight: bold;">ANOMALIE dans les totaux : 
+                        <span t-esc="'{0:,.2f}'.format(o.amount_untaxed).replace(',', ' ').replace('.', ',')"/> != (
+                        <span t-esc="'{0:,.2f}'.format(total2).replace(',', ' ').replace('.', ',')"/> - 
+                        <span t-esc="'{0:,.2f}'.format(total3).replace(',', ' ').replace('.', ',')"/> + 
+                        <span t-esc="'{0:,.2f}'.format(revision).replace(',', ' ').replace('.', ',')"/>)
+                        </div>
+                        <br />
+                    </t>
+                    <div style="height:3mm"/>
+
+                    <table style="width:100%">
+                        <tr>
+                            <td>Notre relevé d'identité banquaire : IBAN FR76 1027 8025 7000 0612 9034 555 - BIC CMCIFR2A</td>
+                        </tr>
+                    </table>
+                    <div style="height:3mm"/>
+                    <table style="width:100%">
+                        <tr style="height:35mm">
+                            <td width="65%" style="font-size:9pt">
+                                Valeur en votre aimable règlement à 30 jours date de facture sans escompte.<br />
+                                Toute somme non payée à l'échéance donnera lieu au paiement par le client de
+                                pénalités fixées à trois fois le taux de refinancement de la Banque Centrale
+                                Européenne majoré de 10 points.<br />
+                                Ces pénalités seront exigibles de plein droit.<br />
+                                Conformément aux articles L.441-6 c.com. et D.441-5 c.com. tout retard de
+                                paiement entraine de plein droit, outre les pénalités de retard, une obligation pour
+                                le débiteur de payer une indemnité forfaitaire de 40 € pour frais de recouvrement.
+                            </td>
+                            <td>
+                                Tampon et signature
+                            </td>
+                        </tr>
+                    </table>
+                    <!--TODO : Il faut conserver cette partie pour des raisons d'héritage -->
+                    <div class="clearfix">
+                        <div id="total" class="row">
+                            <div>
+                                <table class="table table-sm"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </template>
+    </data>
+</odoo>

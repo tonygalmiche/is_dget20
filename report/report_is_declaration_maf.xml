@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+
+    <record id="is_declaration_maf_paperformat" model="report.paperformat">
+        <field name="name">Déclaration MAF</field>
+        <field name="default" eval="True" />
+        <field name="format">A4</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">40</field>
+        <field name="margin_bottom">28</field>
+        <field name="margin_left">7</field>
+        <field name="margin_right">7</field>
+        <field name="header_line" eval="False" />
+        <field name="header_spacing">35</field>
+        <field name="dpi">90</field>
+    </record>
+
+
+
+
+
+
+<!--
+    <template id="report_layout" name="Report layout">&lt;!DOCTYPE html&gt;
+        <html t-att-lang="lang and lang.replace('_', '-')"
+              t-att-data-report-margin-top="data_report_margin_top"
+              t-att-data-report-header-spacing="data_report_header_spacing"
+              t-att-data-report-dpi="data_report_dpi"
+              t-att-data-report-landscape="data_report_landscape"
+              t-att-web-base-url="web_base_url">
+            <head>
+                <meta charset="utf-8"/>
+                <meta name="viewport" content="initial-scale=1"/>
+                <title><t t-esc="title or 'Odoo Report'"/></title>
+                <t t-call-assets="web.report_assets_common" t-js="false"/>
+                <t t-call-assets="web.assets_common" t-css="false"/>
+                <t t-call-assets="web.report_assets_common" t-css="false"/>
+            </head>
+            <body t-att-class="'container' if not full_width else 'container-fluid'">
+                <div id="wrapwrap">
+                    <main>
+                        <t t-raw="0"/>
+                    </main>
+                </div>
+            </body>
+        </html>
+    </template>
+-->
+
+
+
+
+    <template id="html_container">
+        <t t-set="body_classname" t-value="'container'"/>
+        <t t-call="web.report_layout">
+            <t t-raw="0"/>
+        </t>
+    </template>
+
+
+
+    <!--
+
+    <template id="external_layout_standard">
+        <div class="header">
+            <div class="row">
+                <div class="col-12" style="text-align:center">
+                    test
+                    <img t-att-src="'/is_dget/static/src/img/declaration-maf.png'" style="width:100%"/>
+                    test
+                </div>
+            </div>
+        </div>
+        <t t-raw="0"/>
+        <div class="footer o_standard_footer">
+            <div class="row">
+                <div class="col-12" style="text-align:center">
+                    Page <span class="page"/> / <span class="topage"/>
+                </div>
+            </div>
+        </div>
+    </template>
+    -->
+
+
+    <template id="external_layout_standard">
+        <div t-attf-class="header o_company_#{company.id}_layout">
+
+            <div class="row">
+                <img t-att-src="'/is_dget/static/src/img/declaration-maf.png'" style="width:100%"/>
+            </div>
+
+            <!--
+            <div class="row">
+                <div class="col-3 mb4">
+                    <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" style="max-height: 45px;" alt="Logo"/>
+                </div>
+                <div class="col-9 text-right" style="margin-top:22px;" t-field="company.report_header" name="moto"/>
+            </div>
+            <div t-if="company.logo or company.report_header" class="row zero_min_height">
+                <div class="col-12">
+                    <div style="border-bottom: 1px solid black;"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6" name="company_address">
+                    <div t-field="company.partner_id"
+                        t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'
+                    />
+                </div>
+            </div>
+            -->
+        </div>
+
+        <div t-attf-class="article o_report_layout_standard o_company_#{company.id}_layout"  t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')">
+            <t t-call="web.address_layout"/>
+            <t t-raw="0"/>
+        </div>
+
+        <div t-attf-class="footer o_standard_footer o_company_#{company.id}_layout">
+            <div class="text-center" style="border-top: 1px solid black;">
+
+
+                Page <span class="page"/> / <span class="topage"/>
+
+                <!--
+                <ul class="list-inline mb4">
+                    <li t-if="company.phone" class="list-inline-item d-inline">Phone: <span t-field="company.phone"/></li>
+                    <li t-if="company.email" class="list-inline-item d-inline">Email: <span t-field="company.email"/></li>
+                    <li t-if="company.website" class="list-inline-item d-inline">Web: <span t-field="company.website"/></li>
+                    <li t-if="company.vat" class="list-inline-item d-inline"><t t-esc="company.country_id.vat_label or 'Tax ID'"/>: <span t-field="company.vat"/></li>
+                </ul>
+
+                <div name="financial_infos">
+                    <span t-field="company.report_footer"/>
+                </div>
+
+                <div t-if="report_type == 'pdf'" class="text-muted">
+                    Page: <span class="page"/> / <span class="topage"/>
+                </div>
+                -->
+            </div>
+        </div>
+    </template>
+
+
+
+
+
+
+
+
+
+    <template id="external_layout">
+        <t t-if="not o" t-set="o" t-value="doc"/>
+
+        <t t-if="not company">
+            <!-- Multicompany -->
+            <t t-if="company_id">
+                <t t-set="company" t-value="company_id"/>
+            </t>
+            <t t-elif="o and 'company_id' in o">
+                <t t-set="company" t-value="o.company_id.sudo()"/>
+            </t>
+            <t t-else="else">
+                <t t-set="company" t-value="res_company"/>
+            </t>
+        </t>
+        <t t-call="is_dget.external_layout_standard">
+            <t t-raw="0"/>
+        </t>
+
+    </template>
+
+
+
+
+    <template id="report_is_declaration_maf_document">
+        <t t-call="is_dget.html_container">
+        <t t-call="is_dget.external_layout">
+
+
+            <style>
+                .page{
+                    font-size:9pt;
+                }
+                h1{
+                    font-size:28pt;
+                    text-align:center;
+                }
+                table{
+                    border:1px solid black;
+                    border-collapse: collapse;
+                }
+                th{
+                    padding:2pt;
+                    border:1px solid black;
+                }
+                td{
+                    padding:2pt;
+                    font-size:11pt;
+                    border:1px solid black;
+                }
+            </style>
+
+
+            <div class="page">
+
+
+
+                <t t-set="contrats" t-value="o.get_contrats(o)"/>
+
+                <t t-if="o.type_document == 'maf'">
+                    <h1>
+                        DETAIL DES OPERATIONS<br />
+                        FACTUREES PAR DGET<br />
+                        EN <span t-field="o.name"/><br />
+                    </h1>
+                    <div style="page-break-after:always;" />
+                    <table style="border:1px solid black; width:100%">
+                        <thead>
+                            <tr>
+                                <th style="border:1px solid black;text-align:center;width:40%">Désignation de l'affaire</th>
+                                <th style="border:1px solid black;text-align:center;width:12%">ACTIVITES<br />Code MAF<br />de l'activité<br />déclarée</th>
+                                <th style="border:1px solid black;text-align:center;width:12%">MISSIONS<br />Code C<br />ou code S</th>
+                                <th style="border:1px solid black;text-align:center;width:12%">MONTANT HT<br />des honoaraires<br /><span t-field="o.name"/></th>
+                                <th style="border:1px solid black;text-align:center;width:12%">MONTANT HT<br />honoraires rétrocédés<br />compagnie autre que<br />MAF ou EUROMAF</th>
+                                <th style="border:1px solid black;text-align:center;width:12%">MONTANT HT<br />honoraires rétrocédés<br />assuré<br />MAF ou EUROMAF</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="contrats[0]" t-as="c">
+                                <tr>
+                                    <td style="border:1px solid black;">
+                                        <div><b>Référence : </b><span t-esc="c['contrat'].name"/> : <span t-esc="c['contrat'].dossier_id.nom"/></div>
+                                        <div><b>Date début de mission : </b><span t-esc="c['contrat'].date and c['contrat'].date.strftime('%d/%m/%Y') or ''"/></div>
+                                        <t t-if="c['contrat'].state=='en_cours'">
+                                            <div><b>Mission terminée : </b>Non</div>
+                                        </t>
+                                        <t t-else="">
+                                            <div><b>Mission terminée : </b>Oui</div>
+                                        </t>
+                                        <div><b>Client : </b><span t-esc="c['contrat'].client_id.name"/></div>
+                                        <div><span t-esc="c['contrat'].client_id.zip"/><span t-esc="c['contrat'].client_id.street"/></div>
+                                        <div><b>Localisation du chantier : </b></div>
+                                        <div><span t-esc="c['contrat'].dossier_id.codepostal"/> <span t-esc="c['contrat'].dossier_id.lieu"/></div>
+                                    </td>
+                                    <td style="border:1px solid black;text-align:center;vertical-align: middle;"><span t-esc="c['code']"/></td>
+                                    <td style="border:1px solid black;text-align:center;vertical-align: middle;"><span t-esc="c['traitance']"/></td>
+                                    <td style="border:1px solid black;text-align:center;vertical-align: middle;"><span t-esc="'{:,.2f} €'.format(c['montant']).replace(',',' ').replace('.',',')"/></td>
+                                    <td>&#160;</td>
+                                    <td>&#160;</td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </t>
+
+                <t t-if="o.type_document == 'dget'">
+                    <table style="border:1px solid black; width:80%">
+                        <thead>
+                            <tr>
+                                <th style="border:1px solid black;text-align:center;width:12%">Affaire</th>
+                                <th style="border:1px solid black;text-align:center;width:12%">Contrat</th>
+                                <th style="border:1px solid black;text-align:center;width:20%">Nom affaire</th>
+                                <th style="border:1px solid black;text-align:center;width:10%">Codeass</th>
+                                <th style="border:1px solid black;text-align:center;width:10%">C/S</th>
+                                <th style="border:1px solid black;text-align:center;width:12%">Montant</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="contrats[0]" t-as="c">
+                                <tr>
+                                    <td style="border:1px solid black;"><span t-esc="c['contrat'].name"/></td>
+                                    <td style="border:1px solid black;"><span t-esc="c['contrat'].dossier_id.numaff"/></td>
+                                    <td style="border:1px solid black;"><span t-esc="c['contrat'].dossier_id.nom"/></td>
+                                    <td style="border:1px solid black;text-align:center"><span t-esc="c['code']"/></td>
+                                    <td style="border:1px solid black;text-align:center"><span t-esc="c['traitance']"/></td>
+                                    <td style="border:1px solid black;text-align:right"><span t-esc="'{:,.2f} €'.format(c['montant']).replace(',',' ').replace('.',',')"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </t>
+
+                <div style="page-break-after:always;" />
+                <h1>Récapitulatif DGET <span t-field="o.name"/></h1>
+                <br />
+                <table style="border:1px solid black; width:40%;margin-left:30%;margin-right:30%">
+                    <thead>
+                        <tr>
+                            <th style="border:1px solid black;text-align:center;width:50%">Codes MAF</th>
+                            <th style="border:1px solid black;text-align:center;width:50%">Montants HT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-set="total" t-value="0"/>
+                        <t t-foreach="contrats[1]" t-as="c">
+                            <t t-set="montant" t-value="c[1]"/>
+                            <t t-set="total"   t-value="total+montant"/>
+
+                            <tr t-if="montant>0" style="height:8mm;white-space: nowrap;">
+                                <td style="border:1px solid black;text-align:center"><span t-esc="c[0]"/></td>
+                                <td style="border:1px solid black;text-align:right"><span t-esc="'{:,.2f} €'.format(montant).replace(',',' ').replace('.',',')"/></td>
+                            </tr>
+                        </t>
+                    </tbody>
+
+                    <tfoot>
+                        <tr>
+                            <th>Total : </th>
+                            <th style="border:1px solid black;text-align:right"><span t-esc="'{:,.2f} €'.format(total).replace(',',' ').replace('.',',')"/></th>
+                        </tr>
+                    </tfoot>
+
+                </table>
+
+
+
+            </div>
+        </t>
+        </t>
+    </template>
+    
+    <template id="report_is_declaration_maf">
+        <t t-call="is_dget.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="is_dget.report_is_declaration_maf_document" />
+            </t>
+        </t>
+    </template>
+
+
+    <report 
+        id="is_declaration_maf_report"
+        string="Déclaration MAF"
+        model="is.declaration.maf" 
+        report_type="qweb-pdf"
+        file="is_dget.report_is_declaration_maf" 
+        name="is_dget.report_is_declaration_maf" 
+        paperformat="is_dget.is_declaration_maf_paperformat"
+
+    />
+    <!--
+    <record id="is_dget.is_declaration_maf_report" model="ir.actions.report.xml">
+        <field name="paperformat_id" ref="is_dget.is_declaration_maf_paperformat"/>
+    </record>
+    -->
+
+</data>
+</odoo>

@@ -1,0 +1,1029 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- is.dossier -->
+    <record id="is_dossier_form" model="ir.ui.view">
+        <field name="name">is.dossier.form</field>
+        <field name="model">is.dossier</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button
+                        name="creation_contrat_action"
+                        type="object"
+                        string="Nouveau contrat"
+                        groups="sales_team.group_sale_manager"
+                    />
+                    <field name="state" widget="statusbar" options="{'clickable': '1'}"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="numaff"/>
+                            <field name="adresse1"/>
+                            <field name="adresse2"/>
+                            <field name="codepostal"/>
+                            <field name="lieu"/>
+                            <field name="m_ouvrage_id"/>
+                            <field name="m_oeuvre_id"/>
+                            <field name="date"/>
+                            <field name="montant_ope"/>
+                            <field name="distance"/>
+                            <field name="duree" widget="float_time"/>
+                        </group>
+                        <group>
+                            <field name="nom" default_focus="1"/>
+                            <field name="description_succinte"/>
+                            <field name="description_complete"/>
+                            <field name="numconcours"/>
+                            <field name="surface"/>
+                            <field name="service_executant"/>
+                            <field name="num_marche"/>
+                            <field name="site_internet"/>
+                            <field name="nota"/>
+                        </group>
+                    </group>
+                    <group string="Références">
+                        <field name="referencee_ids" widget="many2many_tags"/>
+                    </group>
+                    <group string="Contrats">
+                        <field name="contrat_ids" nolabel="1" readonly="1">
+                            <tree default_order="name">
+                                <button string="Contrat" name="acceder_contrat_action" type="object" icon="fa-search-plus"/>
+                                <field name="name"/>
+                                <field name="signe"/>
+                                <field name="client_id"/>
+                                <field name="description"/>
+                                <field name="date"/>
+                                <field name="refclient"/>
+                                <field name="traitance_id"/>
+                            </tree>
+                        </field>
+                    </group>
+
+                    <group string="Adjudicataires">
+                        <field name="adjudicataire_ids" nolabel="1">
+                            <tree editable="bottom">
+                                <field name="adjudicataire_id" required="1"/>
+                                <field name="nomdulot"/>
+                                <field name="montant" sum="total"/>
+                                <field name="retenu"/>
+                                <field name="notes"/>
+                            </tree>
+                        </field>
+                    </group>
+
+                    <group string="Notes">
+                        <field name="note_ids" nolabel="1">
+                            <tree editable="bottom">
+                                <field name="date"/>
+                                <field name="auteur"/>
+                                <field name="titre"/>
+                                <field name="texte_note"/>
+                            </tree>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="is_dossier_tree" model="ir.ui.view">
+        <field name="name">is.dossier.tree</field>
+        <field name="model">is.dossier</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="numaff"/>
+                <field name="nom"/>
+                <field name="lieu"/>
+                <field name="m_ouvrage_id"/>
+                <field name="m_oeuvre_id"/>
+                <field name="montant_ope"/>
+                <field name="surface"/>
+                <field name="distance"/>
+                <field name="duree" widget="float_time"/>
+                <field name="referencee_ids" widget="many2many_tags"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+    <record id="is_dossier_search" model="ir.ui.view">
+        <field name="name">is.dossier.search</field>
+        <field name="model">is.dossier</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="numaff"/>
+                <field name="nom"/>
+                <field name="lieu"/>
+                <field name="m_ouvrage_id"/>
+                <field name="m_oeuvre_id"/>
+                <field name="referencee_ids"/>
+                <field name="state"/>
+           </search>
+        </field>
+    </record>
+    <record id="is_dossier_pivot" model="ir.ui.view">
+        <field name="name">is_dossier_pivot</field>
+        <field name="model">is.dossier</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="m_ouvrage_id" type="row"/>
+                <field name="montant_ope"  type="measure"/>
+            </pivot>
+        </field>
+    </record>
+    <record id="is_dossier_graph" model="ir.ui.view">
+        <field name="name">is_dossier_graph</field>
+        <field name="model">is.dossier</field>
+        <field name="arch" type="xml">
+            <graph type="bar" orientation="vertical" stacked="False">
+                <field name="m_ouvrage_id" type="row"/>
+                <field name="montant_ope"  type="measure"/>
+            </graph>
+        </field>
+    </record>
+    <record  id="is_dossier_action" model="ir.actions.act_window">
+        <field name="name">Dossier</field>
+        <field name="res_model">is.dossier</field>
+        <field name="view_type">form</field>
+        <field name="limit">200</field>
+        <field name="view_mode">tree,form,pivot,graph</field>
+    </record>
+
+
+    <!-- is.dossier.adjudicataire -->
+    <record id="is_dossier_adjudicataire_form" model="ir.ui.view">
+        <field name="name">is.dossier.adjudicataire.form</field>
+        <field name="model">is.dossier.adjudicataire</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="dossier_id"/>
+                            <field name="adjudicataire_id" required="1"/>
+                            <field name="nomdulot"/>
+                            <field name="montant" sum="Total"/>
+                            <field name="retenu"/>
+                            <field name="notes"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="is_dossier_adjudicataire_tree" model="ir.ui.view">
+        <field name="name">is.dossier.adjudicataire.tree</field>
+        <field name="model">is.dossier.adjudicataire</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="dossier_id"/>
+                <field name="adjudicataire_id"/>
+                <field name="nomdulot"/>
+                <field name="montant" sum="Total"/>
+                <field name="retenu"/>
+                <field name="notes"/>
+            </tree>
+        </field>
+    </record>
+    <record id="is_dossier_adjudicataire_search" model="ir.ui.view">
+        <field name="name">is.dossier.adjudicataire.search</field>
+        <field name="model">is.dossier.adjudicataire</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="dossier_id"/>
+                <field name="adjudicataire_id"/>
+                <field name="nomdulot"/>
+                <field name="retenu"/>
+                <field name="notes"/>
+           </search>
+        </field>
+    </record>
+    <record  id="is_dossier_adjudicataire_action" model="ir.actions.act_window">
+        <field name="name">Adjudicataires</field>
+        <field name="res_model">is.dossier.adjudicataire</field>
+        <field name="view_type">form</field>
+        <field name="limit">200</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+
+
+    <!-- is.dossier.reference -->
+    <record id="is_dossier_reference_form" model="ir.ui.view">
+        <field name="name">is.dossier.reference.form</field>
+        <field name="model">is.dossier.reference</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="idreference"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="is_dossier_reference_tree" model="ir.ui.view">
+        <field name="name">is.dossier.reference.tree</field>
+        <field name="model">is.dossier.reference</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="idreference"/>
+            </tree>
+        </field>
+    </record>
+    <record id="is_dossier_reference_search" model="ir.ui.view">
+        <field name="name">is.dossier.reference.search</field>
+        <field name="model">is.dossier.reference</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="idreference"/>
+           </search>
+        </field>
+    </record>
+    <record  id="is_dossier_reference_action" model="ir.actions.act_window">
+        <field name="name">Référence Dossier</field>
+        <field name="res_model">is.dossier.reference</field>
+        <field name="view_type">form</field>
+        <field name="limit">200</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+
+    <!-- is.dossier.contrat -->
+    <record id="update_restant_ht_action_server" model="ir.actions.server">
+        <field name="name">Actualiser Restant HT et Facturable HT</field>
+        <field name="type">ir.actions.server</field>
+        <field name="state">code</field>
+        <field name="model_id" ref="is_dget.model_is_dossier_contrat"/>
+        <field name="binding_model_id" ref="is_dget.model_is_dossier_contrat"/>
+        <field name="code">
+            records.update_restant_ht_action()
+        </field>
+    </record>
+
+    <record id="update_reellement_facture_contrat_action_server" model="ir.actions.server">
+        <field name="name">Actualiser réellement facturé</field>
+        <field name="type">ir.actions.server</field>
+        <field name="state">code</field>
+        <field name="model_id" ref="is_dget.model_is_dossier_contrat"/>
+        <field name="binding_model_id" ref="is_dget.model_is_dossier_contrat"/>
+        <field name="code">
+            records.update_reellement_facture_action()
+        </field>
+    </record>
+
+    <record id="is_dossier_contrat_form" model="ir.ui.view">
+        <field name="name">is.dossier.contrat.form</field>
+        <field name="model">is.dossier.contrat</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar" options="{'clickable': '1'}"/>
+                </header>
+                <sheet>
+                    <style>
+                        .o_form_view .o_form_sheet_bg > .o_form_sheet{
+                            max-width: 1800px;
+                        }
+                        .o_form_label{
+                            white-space: nowrap;
+                        }
+                    </style>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="dossier_id"/>
+                            <field name="description" default_focus="1"/>
+                            <field name="signe"/>
+                            <field name="client_id" required="1"/>
+                            <field name="tva_id"    required="1"/>
+                            <field name="notes"/>
+                        </group>
+                        <group>
+                            <field name="condreglement"/>
+                            <field name="delaipaiement"/>
+                            <field name="date"/>
+                            <field name="refclient"/>
+                            <field name="num_marche"/>
+                            <field name="code_service"/>
+                            <field name="traitance_id"/>
+                            <field name="numligne_max" invisible="1"/>
+                            <!-- <field name="anomalie"/> -->
+                        </group>
+                    </group>
+                    <group string="Composition du contrat">
+                        <field name="detail_ids" nolabel="1" context="{'dossier_id': active_id,'test':id}">
+                            <tree decoration-info="commentaire == True">
+                                <field name="numligne" widget="handle"/>
+                                <field name="commentaire" invisible="1"/>
+                                <field name="phase_id"/>
+                                <field name="texte"/>
+                                <field name="montant_ht" sum="Total"/>
+                                <field name="avancement"/>
+                                <field name="nota"/>
+                                <field name="facturable"/>
+                                <field name="a_facturer"/>
+                                <!-- <field name="facture"/> -->
+                                <field name="facture_recursif"/>
+                                <field name="montant_facture"    sum="Total"/>
+                                <field name="montant_a_facturer" sum="Total"/>
+                                <!--<field name="facture_le" readonly="1"/>-->
+                            </tree>
+                            <form>
+                                <group>
+                                    <group>
+                                        <field name="numligne" readonly="1"/>
+                                        <field name="commentaire"/>
+                                        <field 
+                                            name="phase_id" 
+                                            attrs="{'invisible': [('commentaire','==', True)], 'required': [('commentaire','==', False)]}"
+                                        />
+                                        <field name="texte"    required="1"/>
+                                        <field name="avancement" attrs="{'invisible': [('commentaire','==', True)]}"/>
+                                    </group>
+                                    <group  attrs="{'invisible': [('commentaire','==', True)]}">
+                                        <field name="nota"/>
+                                        <field name="facturable"/>
+                                        <field name="a_facturer" attrs="{'invisible': [('facturable','!=', 'oui')]}"/>
+                                        <field name="facture"    attrs="{'invisible': [('facturable','!=', 'oui')]}" readonly="1"/>
+                                        <field name="facture_le" attrs="{'invisible': [('facturable','!=', 'oui')]}" readonly="1"/>
+                                    </group>
+                                </group>
+                                <group  attrs="{'invisible': [('commentaire','==', True)]}">
+                                    <group string="a">
+                                        <field name="stxt1"/>
+                                        <field name="montant1"/>
+                                        <field name="codass1_id"/>
+                                    </group>
+                                    <group string="b">
+                                        <field name="stxt2"/>
+                                        <field name="montant2"/>
+                                        <field name="codass2_id"/>
+                                    </group>
+                                    <group string="c">
+                                        <field name="stxt3"/>
+                                        <field name="montant3"/>
+                                        <field name="codass3_id"/>
+                                    </group>
+                                    <group string="d">
+                                        <field name="stxt4"/>
+                                        <field name="montant4"/>
+                                        <field name="codass4_id"/>
+                                    </group>
+                                </group>
+                                <group attrs="{'invisible': [('commentaire','==', True)]}">
+                                    <field name="montant_ht"/>
+                                </group>
+
+                            </form>
+                        </field>
+                    </group>
+                    <group>
+                        <field name="restant_ht"/>
+                        <field name="facturable_ht"/>
+                        <field name="show_generer_facture_btn" invisible="1"/>
+                    </group>
+                    <group string="Factures">
+                        <button
+                            name="generer_facture_action"
+                            type="object"
+                            string="Générer nouvelle facture"
+                            attrs="{'invisible': [('show_generer_facture_btn','=',False)]}"
+                        />
+                    </group>
+                    <group>
+                        <field name="invoice_ids" nolabel="1">
+                            <tree decoration-danger="amount_untaxed_invoice_signed &lt; 0">
+                                <button string="Facture" name="acceder_facture_action" type="object" icon="fa-search-plus"/>
+                                <field name="number"/>
+                                <field name="date_invoice"/>
+                                <field name="date_due"/>
+                                <field name="amount_untaxed_invoice_signed"  sum="Total" string="Montant HT"/>
+                                <field name="is_montant_revision"            sum="Total"/>
+                                <field name="is_montant_hors_revision_signe" sum="Total"/>
+                                <field name="state" string="État"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <group>
+                        <field name="nb_factures"/>
+                    </group>
+                    <group string="Heures">
+                        <field name="heure_ids" nolabel="1">
+                            <tree>
+                                <field name="date_travaillee"/>
+                                <field name="user_id"/>
+                                <field name="login"/>
+                                <field name="nb_heures" sum="Total"/>
+                                <field name="note"/>
+                            </tree>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="is_dossier_contrat_tree" model="ir.ui.view">
+        <field name="name">is.dossier.contrat.tree</field>
+        <field name="model">is.dossier.contrat</field>
+        <field name="arch" type="xml">
+            <tree decoration-muted="state == 'termine'">
+                <field name="name"/>
+                <field name="signe"/>
+                <field name="dossier_id"/>
+                <field name="client_id"/>
+                <field name="description"/>
+                <field name="date"/>
+                <field name="refclient"/> 
+                <field name="traitance_id"/>
+                <field name="restant_ht"    sum="Total"/>
+                <field name="facturable_ht" sum="Total"/>
+                <field name="nb_factures"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+    <record id="is_dossier_contrat_search" model="ir.ui.view">
+        <field name="name">is.dossier.contrat.search</field>
+        <field name="model">is.dossier.contrat</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="signe"/>
+                <field name="dossier_id"/>
+                <field name="client_id"/>
+                <field name="description"/>
+                <field name="date"/>
+                <field name="refclient"/>
+                <field name="traitance_id"/>
+           </search>
+        </field>
+    </record>
+    <record  id="is_dossier_contrat_restant_action" model="ir.actions.act_window">
+        <field name="name">Contrats en cours</field>
+        <field name="res_model">is.dossier.contrat</field>
+        <field name="view_type">form</field>
+        <field name="limit">200</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('restant_ht','&gt;',0),('state','=','en_cours')]</field>
+    </record>
+    <record  id="is_dossier_contrat_facturable_action" model="ir.actions.act_window">
+        <field name="name">Contrats facturables</field>
+        <field name="res_model">is.dossier.contrat</field>
+        <field name="view_type">form</field>
+        <field name="limit">200</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('facturable_ht','&gt;',0),('state','=','en_cours')]</field>
+    </record>
+    <record  id="is_dossier_contrat_action" model="ir.actions.act_window">
+        <field name="name">Tous les contrats</field>
+        <field name="res_model">is.dossier.contrat</field>
+        <field name="view_type">form</field>
+        <field name="limit">200</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+    </record>
+
+
+
+    <!-- is.dossier.contrat.traitance -->
+    <record id="is_dossier_contrat_traitance_form" model="ir.ui.view">
+        <field name="name">is.dossier.contrat.traitance.form</field>
+        <field name="model">is.dossier.contrat.traitance</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="is_dossier_contrat_traitance_tree" model="ir.ui.view">
+        <field name="name">is.dossier.contrat.traitance.tree</field>
+        <field name="model">is.dossier.contrat.traitance</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="code"/>
+            </tree>
+        </field>
+    </record>
+    <record id="is_dossier_contrat_traitance_search" model="ir.ui.view">
+        <field name="name">is.dossier.contrat.traitance.search</field>
+        <field name="model">is.dossier.contrat.traitance</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="code"/>
+           </search>
+        </field>
+    </record>
+    <record  id="is_dossier_contrat_traitance_action" model="ir.actions.act_window">
+        <field name="name">Traitance contrat</field>
+        <field name="res_model">is.dossier.contrat.traitance</field>
+        <field name="view_type">form</field>
+        <field name="limit">200</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+    <!-- is.dossier.contrat.phase -->
+    <record id="is_dossier_contrat_phase_form" model="ir.ui.view">
+        <field name="name">is.dossier.contrat.phase.form</field>
+        <field name="model">is.dossier.contrat.phase</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="txt_phase"/>
+                            <field name="det_phase"/>
+                            <field name="ref_phase"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="is_dossier_contrat_phase_tree" model="ir.ui.view">
+        <field name="name">is.dossier.contrat.phase.tree</field>
+        <field name="model">is.dossier.contrat.phase</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="txt_phase"/>
+                <field name="det_phase"/>
+                <field name="ref_phase"/>
+            </tree>
+        </field>
+    </record>
+    <record id="is_dossier_contrat_phase_search" model="ir.ui.view">
+        <field name="name">is.dossier.contrat.phase.search</field>
+        <field name="model">is.dossier.contrat.phase</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="txt_phase"/>
+                <field name="det_phase"/>
+                <field name="ref_phase"/>
+           </search>
+        </field>
+    </record>
+    <record  id="is_dossier_contrat_phase_action" model="ir.actions.act_window">
+        <field name="name">Phase Contrat</field>
+        <field name="res_model">is.dossier.contrat.phase</field>
+        <field name="view_type">form</field>
+        <field name="limit">200</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+    <!-- is.dossier.code.assurance -->
+    <record id="is_dossier_code_assurance_form" model="ir.ui.view">
+        <field name="name">is.dossier.code.assurance.form</field>
+        <field name="model">is.dossier.code.assurance</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="description"/>
+                            <field name="ordre"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="is_dossier_code_assurance_tree" model="ir.ui.view">
+        <field name="name">is.dossier.code.assurance.tree</field>
+        <field name="model">is.dossier.code.assurance</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="code"/>
+                <field name="description"/>
+                <field name="ordre"/>
+            </tree>
+        </field>
+    </record>
+    <record id="is_dossier_code_assurance_search" model="ir.ui.view">
+        <field name="name">is.dossier.code.assurance.search</field>
+        <field name="model">is.dossier.code.assurance</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="code"/>
+                <field name="description"/>
+           </search>
+        </field>
+    </record>
+    <record  id="is_dossier_code_assurance_action" model="ir.actions.act_window">
+        <field name="name">Code assurance</field>
+        <field name="res_model">is.dossier.code.assurance</field>
+        <field name="view_type">form</field>
+        <field name="limit">200</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+
+    <!-- is.dossier.contrat.detail -->
+    <record id="is_dossier_contrat_detail_form" model="ir.ui.view">
+        <field name="name">is.dossier.contrat.detail.form</field>
+        <field name="model">is.dossier.contrat.detail</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="contrat_id"/>
+                        <field name="dossier_id"/>
+                        <field name="description"/>
+                        <field name="numligne"/>
+                        <field name="phase_id" required="1"/>
+                        <field name="det_phase"/>
+                        <field name="texte"    required="1"/>
+                        <field name="avancement"/>
+                        <field name="nota"/>
+                        <field name="facturable"/>
+                        <field name="a_facturer" attrs="{'invisible': [('facturable','!=', 'oui')]}"/>
+                        <field name="facture"    attrs="{'invisible': [('facturable','!=', 'oui')]}" readonly="1"/>
+                        <field name="facture_le" attrs="{'invisible': [('facturable','!=', 'oui')]}" readonly="1"/>
+                    </group>
+                    <group>
+                        <group string="a">
+                            <field name="stxt1"/>
+                            <field name="montant1"/>
+                            <field name="codass1_id"/>
+                        </group>
+                        <group string="b">
+                            <field name="stxt2"/>
+                            <field name="montant2"/>
+                            <field name="codass2_id"/>
+                        </group>
+                        <group string="c">
+                            <field name="stxt3"/>
+                            <field name="montant3"/>
+                            <field name="codass3_id"/>
+                        </group>
+                        <group string="d">
+                            <field name="stxt4"/>
+                            <field name="montant4"/>
+                            <field name="codass4_id"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="montant_ht"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="is_dossier_contrat_detail_tree" model="ir.ui.view">
+        <field name="name">is.dossier.contrat.detail.tree</field>
+        <field name="model">is.dossier.contrat.detail</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="contrat_id"/>
+                <field name="numligne"/>
+                <field name="phase_id"/>
+                <field name="texte"/>
+                <field name="montant_ht" sum="Total"/>
+                <field name="avancement"/>
+                <field name="nota"/>
+                <field name="facturable"/>
+                <field name="a_facturer"/>
+                <field name="facture"/>
+                <field name="facture_le"/>
+            </tree>
+        </field>
+    </record>
+    <record id="is_dossier_contrat_detail_search" model="ir.ui.view">
+        <field name="name">is.dossier.contrat.detail.search</field>
+        <field name="model">is.dossier.contrat.detail</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="contrat_id"/>
+                <field name="state"/>
+                <field name="dossier_id"/>
+                <field name="description"/>
+                <field name="phase_id"/>
+                <field name="texte"/>
+                <field name="codass1_id" string="Code assurance"
+                       filter_domain="['|','|','|', ('codass1_id','=',self), ('codass2_id','=',self), ('codass3_id', '=', self), ('codass4_id', '=', self)]"/>
+           </search>
+        </field>
+    </record>
+    <record  id="is_dossier_contrat_detail_action" model="ir.actions.act_window">
+        <field name="name">Détail contrat</field>
+        <field name="res_model">is.dossier.contrat.detail</field>
+        <field name="view_type">form</field>
+        <field name="limit">200</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+
+    <record id="is_dossier_contrat_detail_maf_tree" model="ir.ui.view">
+        <field name="name">is_dossier_contrat_detail_maf_tree</field>
+        <field name="model">is.dossier.contrat.detail</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="contrat_id"/>
+                <field name="numligne"/>
+                <field name="phase_id"/>
+                <field name="texte"/>
+                <field name="montant1" sum="Total"/>
+                <field name="codass1_id"/>
+                <field name="montant2" sum="Total"/>
+                <field name="codass2_id"/>
+                <field name="montant3" sum="Total"/>
+                <field name="codass3_id"/>
+                <field name="montant4" sum="Total"/>
+                <field name="codass4_id"/>
+            </tree>
+        </field>
+    </record>
+    <record  id="is_dossier_contrat_detail_maf_action" model="ir.actions.act_window">
+        <field name="name">Détail contrat MAF</field>
+        <field name="res_model">is.dossier.contrat.detail</field>
+        <field name="view_type">form</field>
+        <field name="limit">200</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="is_dget.is_dossier_contrat_detail_maf_tree"/>
+    </record>
+
+
+
+    <record id="is_dossier_contrat_detail_facturable_tree" model="ir.ui.view">
+        <field name="name">is_dossier_contrat_detail_facturable_tree</field>
+        <field name="model">is.dossier.contrat.detail</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="contrat_id"/>
+                <field name="numligne"/>
+                <field name="phase_id"/>
+                <field name="a_facturer"         sum="Total"/>
+                <!-- <field name="facture"            sum="Total"/> -->
+                <field name="facture_recursif"   sum="Total"/>
+                <field name="montant_facture"    sum="Total"/>
+                <field name="montant_a_facturer" sum="Total"/>
+            </tree>
+        </field>
+    </record>
+    <record  id="is_dossier_contrat_detail_facturable_action" model="ir.actions.act_window">
+        <field name="name">Détail contrat Facturable</field>
+        <field name="res_model">is.dossier.contrat.detail</field>
+        <field name="view_type">form</field>
+        <field name="limit">200</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="is_dget.is_dossier_contrat_detail_facturable_tree"/>
+    </record>
+
+
+    <record id="is_dossier_contrat_detail_encours_a_facturer_tree" model="ir.ui.view">
+        <field name="name">is_dossier_contrat_detail_encours_a_facturer_tree</field>
+        <field name="model">is.dossier.contrat.detail</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="contrat_id"/>
+                <field name="dossier_id"/>
+                <field name="description"/>
+                <field name="numligne"/>
+                <field name="phase_id"/>
+                <field name="det_phase"/>
+                <field name="montant_ht"         sum="Total"/>
+                <field name="avancement"/>
+                <field name="facture_recursif"               string="% déjà facturé"/>
+                <field name="reste_facturable"               string="% reste facturable"/>
+                <field name="montant_facture"    sum="Total" string="Montant déjà facturé"/>
+                <field name="encours"/>
+                <field name="montant_encours" sum="Total"/>
+                <field name="restant"/>
+                <field name="montant_restant" sum="Total"/>
+                <field name="facturable" invisible="1"/>
+                <field name="state"      invisible="1"/>
+            </tree>
+        </field>
+    </record>
+    <record  id="is_dossier_contrat_detail_encours_a_facturer_action" model="ir.actions.act_window">
+        <field name="name">Détail contrat Encours + A facturer</field>
+        <field name="res_model">is.dossier.contrat.detail</field>
+        <field name="view_type">form</field>
+        <field name="limit">1000</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="is_dget.is_dossier_contrat_detail_encours_a_facturer_tree"/>
+        <field name="domain">[
+            ('facturable','=','oui'),
+            ('state'     ,'=','en_cours'),
+            ('facture_recursif','&lt;',100),
+            ('reste_facturable','!=',0),
+            ('montant_ht'      ,'&gt;',0),
+            ('avancement'      ,'&gt;',0),
+        ]</field>
+    </record>
+
+
+
+    <!-- is.salarie.heure -->
+    <record id="is_salarie_heure_form" model="ir.ui.view">
+        <field name="name">is.salarie.heure.form</field>
+        <field name="model">is.salarie.heure</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="date_travaillee"/>
+                            <field name="user_id"/>
+                            <field name="login" readonly="1"/>
+                            <field name="contrat_id" default_focus="1"/>
+                            <field name="nb_heures"/>
+                            <field name="note"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="is_salarie_heure_tree" model="ir.ui.view">
+        <field name="name">is.salarie.heure.tree</field>
+        <field name="model">is.salarie.heure</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="date_travaillee"/>
+                <field name="user_id"/>
+                <field name="login"/>
+                <field name="contrat_id"/>
+                <field name="nb_heures" sum="Total"/>
+                <field name="note"/>
+            </tree>
+        </field>
+    </record>
+    <record id="is_salarie_heure_search" model="ir.ui.view">
+        <field name="name">is.salarie.heure.search</field>
+        <field name="model">is.salarie.heure</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="date_travaillee"/>
+                <field name="user_id"/>
+                <field name="login"/>
+                <field name="contrat_id"/>
+                <field name="note"/>
+           </search>
+        </field>
+    </record>
+    <record  id="is_salarie_heure_action" model="ir.actions.act_window">
+        <field name="name">Heures des salariés</field>
+        <field name="res_model">is.salarie.heure</field>
+        <field name="view_type">form</field>
+        <field name="limit">200</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+
+
+
+    <!-- is.declaration.maf -->
+    <record id="is_declaration_maf_form" model="ir.ui.view">
+        <field name="name">is.declaration.maf.form</field>
+        <field name="model">is.declaration.maf</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button
+                        name="export_excel_action"
+                        type="object"
+                        string="Export Excel"
+                    />
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="type_document"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="is_declaration_maf_tree" model="ir.ui.view">
+        <field name="name">is.declaration.maf.tree</field>
+        <field name="model">is.declaration.maf</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+    <record id="is_declaration_maf_search" model="ir.ui.view">
+        <field name="name">is.declaration.maf.search</field>
+        <field name="model">is.declaration.maf</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+           </search>
+        </field>
+    </record>
+    <record  id="is_declaration_maf_action" model="ir.actions.act_window">
+        <field name="name">Déclaration MAF</field>
+        <field name="res_model">is.declaration.maf</field>
+        <field name="view_type">form</field>
+        <field name="limit">200</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+    <!-- is.concours -->
+    <record id="is_concours_form" model="ir.ui.view">
+        <field name="name">is.concours.form</field>
+        <field name="model">is.concours</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="numconcours"/>
+                            <field name="organisme_id" default_focus="1"/>
+                            <field name="nom"/>
+                            <field name="libelle_exacte"/>
+                            <field name="lieu"/>
+                            <field name="dateparution"/>
+                            <field name="daterendu"/>
+                            <field name="journal"/>
+                            <field name="lienannonce"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="qui_ids" nolabel="1">
+                            <tree editable="bottom">
+                                <field name="nom"/>
+                                <field name="dateenvoi"/>
+                                <field name="retenu"/>
+                                <field name="gagne"/>
+                                <field name="equipes"/>
+                            </tree>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="is_concours_tree" model="ir.ui.view">
+        <field name="name">is.concours.tree</field>
+        <field name="model">is.concours</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="numconcours"/>
+                <field name="organisme_id"/>
+                <field name="nom"/>
+                <field name="libelle_exacte"/>
+                <field name="lieu"/>
+                <field name="dateparution"/>
+                <field name="daterendu"/>
+                <field name="journal"/>
+                <field name="lienannonce"/>
+            </tree>
+        </field>
+    </record>
+    <record id="is_concours_search" model="ir.ui.view">
+        <field name="name">is.concours.search</field>
+        <field name="model">is.concours</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="numconcours"/>
+                <field name="organisme_id"/>
+                <field name="nom"/>
+                <field name="libelle_exacte"/>
+                <field name="lieu"/>
+                <field name="journal"/>
+                <field name="lienannonce"/>
+           </search>
+        </field>
+    </record>
+    <record  id="is_concours_action" model="ir.actions.act_window">
+        <field name="name">Concours</field>
+        <field name="res_model">is.concours</field>
+        <field name="view_type">form</field>
+        <field name="limit">200</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+
+
+
+
+</odoo>

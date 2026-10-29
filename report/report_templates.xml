@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="is_external_layout_standard" name="is_external_layout_standard" inherit_id="web.external_layout_standard">
+        <xpath expr="//div[hasclass('header')]" position="replace">
+            <div class="header">
+                <div class="row">
+                    <div class="col-12" style="text-align:center">
+                        <img t-att-src="'/is_dget/static/src/img/bandeau-dget.png'" style="width:100%"/>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+        <xpath expr="//div[hasclass('o_report_layout_standard')]" position="replace">
+            <div class="article o_report_layout_standard"  t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id">
+                <t t-raw="0"/>
+            </div>
+        </xpath>
+        <xpath expr="//div[hasclass('footer')]" position="replace">
+            <style>
+            </style>
+            <div class="footer o_standard_footer">
+                <table style="width:100%;font-size:8pt;border-top: 1px solid black;margin-top:3mm">
+                    <tr>
+                        <td style="width:90%">
+                            <span t-field="company.street"/> - 
+                            <span t-field="company.street2"/> - 
+                            <span t-field="company.zip"/> <span t-field="company.city"/> - 
+                            Tél : <span t-field="company.phone"/> - 
+                            <span t-field="company.website"/> - 
+                            <span t-field="company.email"/><br />
+                            TVA intracommunautaire : <span t-field="company.vat"/> - 
+                            SIRET : <span t-field="company.siret"/> - 
+                            <span t-field="company.ape"/><br />
+                            <span t-field="company.company_registry"/>
+                        </td>
+                        <td style="text-align:right;vertical-align:middle">
+                            Page <span class="page"/> / <span class="topage"/>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </xpath>
+    </template>
+</odoo>

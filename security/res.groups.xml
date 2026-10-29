@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.module.category" id="is_groupe_dget_module_category">
+        <field name="name">Groupes DGET</field>
+        <field name="description">Groupes DGET</field>
+        <field name="sequence">1</field>
+    </record>
+    <record model="res.groups" id="is_gestionnaire_adjudicataire_group" >
+        <field name="name">Gestionnaire adjudicataire</field>
+        <field name="comment"></field>
+        <field name="category_id" ref="is_groupe_dget_module_category"/>
+    </record>
+</odoo>

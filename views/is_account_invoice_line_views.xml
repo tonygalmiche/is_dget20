@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <!-- is.account.invoice.line -->
+    <record id="is_account_invoice_line_form" model="ir.ui.view">
+        <field name="name">is.account.invoice.line.form</field>
+        <field name="model">is.account.invoice.line</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="invoice_id"/>
+                            <field name="date_invoice"/>
+                            <field name="invoice_line_id"/>
+                            <field name="is_invoice_id"/>
+                            <field name="partner_id"/>
+                            <field name="contrat_id"/>
+                            <field name="is_contrat_detail_id"/>
+                            <field name="quantity"/>
+                            <field name="montant1"/>
+                            <field name="codass1_id"/>
+                            <field name="montant2"/>
+                            <field name="codass2_id"/>
+                            <field name="montant3"/>
+                            <field name="codass3_id"/>
+                            <field name="montant4"/>
+                            <field name="codass4_id"/>
+                            <field name="sequence"/>
+                            <field name="price_subtotal"/>
+
+                        </group>
+
+                        <group>
+                            <field name="total1"/>
+                            <field name="total2"/>
+                            <field name="total3"/>
+                            <field name="total4"/>
+                            <field name="total_ligne"/>
+
+                            <field name="rapport1"/>
+                            <field name="rapport2"/>
+                            <field name="rapport3"/>
+                            <field name="rapport4"/>
+                            <field name="rapport_total" sum="Total"/>
+
+                            <field name="revision1"      sum="Total"/>
+                            <field name="revision2"      sum="Total"/>
+                            <field name="revision3"      sum="Total"/>
+                            <field name="revision4"      sum="Total"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="is_account_invoice_line_tree" model="ir.ui.view">
+        <field name="name">is.account.invoice.line.tree</field>
+        <field name="model">is.account.invoice.line</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="invoice_id"/>
+                <field name="date_invoice"/>
+                <field name="invoice_line_id"/>
+                <field name="is_invoice_id"/>
+                <field name="partner_id"/>
+                <field name="contrat_id"/>
+                <field name="is_contrat_detail_id"/>
+                <field name="quantity"/>
+                <field name="revision1" sum="Total"/>
+                <field name="codass1_id"/>
+                <field name="revision2" sum="Total"/>
+                <field name="codass2_id"/>
+                <field name="revision3" sum="Total"/>
+                <field name="codass3_id"/>
+                <field name="revision4" sum="Total"/>
+                <field name="codass4_id"/>
+                <field name="total_ligne" sum="Total"/>
+                <field name="price_subtotal"      sum="Total"/>
+                <field name="is_montant_revision" sum="Total"/>
+            </tree>
+        </field>
+    </record>
+    <record id="is_account_invoice_line_search" model="ir.ui.view">
+        <field name="name">is.account.invoice.line.search</field>
+        <field name="model">is.account.invoice.line</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="invoice_id"/>
+                <field name="invoice_line_id"/>
+                <field name="is_invoice_id"/>
+                <field name="partner_id"/>
+                <field name="contrat_id"/>
+                <field name="is_contrat_detail_id"/>
+                <field name="codass1_id" string="Code assurance"
+                       filter_domain="['|','|','|', ('codass1_id','=',self), ('codass2_id','=',self), ('codass3_id', '=', self), ('codass4_id', '=', self)]"/>
+                <filter name="2019" string="2019" domain="[('date_invoice','&gt;','2018-12-31'),('date_invoice','&lt;','2020-01-01')]"/>
+                <filter name="2020" string="2020" domain="[('date_invoice','&gt;','2019-12-31'),('date_invoice','&lt;','2021-01-01')]"/>
+                <filter name="2021" string="2021" domain="[('date_invoice','&gt;','2020-12-31'),('date_invoice','&lt;','2022-01-01')]"/>
+                <filter name="2022" string="2022" domain="[('date_invoice','&gt;','2021-12-31'),('date_invoice','&lt;','2023-01-01')]"/>
+                <filter name="2023" string="2023" domain="[('date_invoice','&gt;','2022-12-31'),('date_invoice','&lt;','2024-01-01')]"/>
+                <filter name="2024" string="2024" domain="[('date_invoice','&gt;','2023-12-31'),('date_invoice','&lt;','2025-01-01')]"/>
+                <filter name="total" string="Total ligne > 0" domain="[('total_ligne','&gt;',0)]"/>
+          </search>
+        </field>
+    </record>
+    <record  id="is_account_invoice_line_action" model="ir.actions.act_window">
+        <field name="name">Lignes de factures</field>
+        <field name="res_model">is.account.invoice.line</field>
+        <field name="view_type">form</field>
+        <field name="limit">200</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+
+
+</odoo>

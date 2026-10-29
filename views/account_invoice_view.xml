@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+
+        <!-- Actualiser TVA et Compte de vente sur les factures -->
+        <record id="update_tva_account_action_server" model="ir.actions.server">
+            <field name="name">Actualiser TVA et Compte de vente</field>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="model_id" ref="is_dget.model_account_invoice"/>
+            <field name="binding_model_id" ref="is_dget.model_account_invoice"/>
+            <field name="code">
+                records.update_tva_account_action()
+            </field>
+        </record>
+
+        <!-- Actualiser réellement facturé sur les factures -->
+        <record id="update_reellement_facture_action_server" model="ir.actions.server">
+            <field name="name">Actualiser réellement facturé</field>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="model_id" ref="is_dget.model_account_invoice"/>
+            <field name="binding_model_id" ref="is_dget.model_account_invoice"/>
+            <field name="code">
+                records.update_deja_facture_action()
+            </field>
+        </record>
+
+        <!-- account.invoice -->
+        <record id="is_invoice_form" model="ir.ui.view">
+            <field name="name">is_invoice_form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//sheet[1]" position="inside">
+                    <style>
+                        .o_form_view .o_form_sheet_bg > .o_form_sheet {
+                            max-width: 1800px;
+                        }
+                        .o_form_label{
+                            white-space: nowrap;
+                        }
+                    </style>
+                </xpath>
+                <field name="partner_id" position="after">
+                    <field name="is_contrat_id"/>
+                    <field name="is_total_contrat_ht"/>
+                    <field name="is_montant_revision"/>
+                    <field name="is_montant_hors_revision"/>
+                    <field name="is_dossier_id"/>
+                    <field name="is_tva_id"/>
+                    <field name="is_facture_payee"/>
+                </field>
+                <notebook position="before">
+                    <div style="background:orange;font-weight: bold;" attrs="{'invisible':[('is_alerte','=',False)]}">
+                        <field 
+                            name="is_alerte"
+                            readonly="1" nolabel="1" 
+                            attrs="{'invisible': [('is_alerte', '=', False)]}"
+                        />
+                    </div>
+                </notebook>
+                <xpath expr="//field[@name='invoice_line_ids']/tree" position="attributes">
+                    <attribute name="limit">500</attribute>
+                </xpath>
+                <xpath expr="//page[1]/field[@name='invoice_line_ids']/tree/field[@name='name']" position="after">
+                    <field name="is_contrat_detail_id"           readonly="1" domain="[('contrat_id','=',parent.is_contrat_id)]"/>
+                    <field name="is_invoice_id"                  readonly="1"/>
+                    <field name="is_deja_facture"                readonly="1"/>
+                    <field name="is_reellement_facture"          readonly="1"/>
+                    <field name="is_montant_reellement_facture"  readonly="1" sum="Total"/>
+                </xpath>
+                <field name="partner_bank_id" position="after">
+                    <field name="is_date_update_facture" readonly="1"/>
+                </field>
+            </field>
+        </record>
+       <record id="is_invoice_tree" model="ir.ui.view">
+            <field name="name">is_invoice_tree</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_tree" />
+            <field name="arch" type="xml">
+                <field name="number" position="replace">
+                    <field name="move_name" string="N°Facture"/>
+                    <field name="type"/>
+                </field>
+                <field name="user_id" position="replace">
+                    <field name="is_contrat_id"/>
+                    <field name="is_dossier_id"/>
+                </field>
+                <field name="state" position="before">
+                    <field name="is_montant_revision"/>
+                    <field name="is_montant_hors_revision"/>
+                </field>
+                <field name="state" position="after">
+                    <field name="is_facture_payee"/>
+                </field>
+            </field>
+        </record>
+        <record id="is_view_account_invoice_filter" model="ir.ui.view">
+            <field name="name">is_view_account_invoice_filter</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.view_account_invoice_filter" />
+            <field name="arch" type="xml">
+                <field name="user_id" position="replace">
+                    <field name="type"/>
+                    <field name="is_contrat_id"/>
+                    <field name="is_dossier_id"/>
+                    <field name="is_facture_payee"/>
+                </field>
+            </field>
+        </record>
+
+        <record  id="is_account_invoice_action" model="ir.actions.act_window">
+            <field name="name">Factures</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form,calendar,graph</field>
+            <field name="view_id" ref="account.invoice_tree"/>
+            <field name="search_view_id" ref="account.view_account_invoice_filter"/>
+            <field name="domain">[('type','in',['out_invoice','out_refund'])]</field>
+            <field name="context">{'type':'out_invoice', 'journal_type': 'sale'}</field>
+            <field name="limit">200</field>
+        </record>
+        <record id="is_account_invoice_action_view1" model="ir.actions.act_window.view">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="account.invoice_tree_with_onboarding"/>
+            <field name="act_window_id" ref="is_account_invoice_action"/>
+        </record>
+        <record id="is_account_invoice_action_view2" model="ir.actions.act_window.view">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account.invoice_form"/>
+            <field name="act_window_id" ref="is_account_invoice_action"/>
+        </record>
+
+
+
+        <!-- account.invoice.line -->
+        <record id="is_view_invoice_line_form" model="ir.ui.view">
+            <field name="name">is_view_invoice_line_form</field>
+            <field name="model">account.invoice.line</field>
+            <field name="inherit_id" ref="account.view_invoice_line_form" />
+            <field name="arch" type="xml">
+                <field name="price_unit" position="after">
+                    <field name="is_contrat_detail_id" readonly="1"/>
+                    <field name="is_invoice_id"        readonly="1"/>
+                    <field name="is_deja_facture"      readonly="1"/>
+                </field>
+            </field>
+        </record>
+        <record id="account_invoice_line_search" model="ir.ui.view">
+            <field name="name">account_invoice_line_search</field>
+            <field name="model">account.invoice.line</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="invoice_id"/>
+                    <field name="product_id"/>
+                    <field name="name"/>
+                    <field name="is_contrat_id"/>
+               </search>
+            </field>
+        </record>
+        <record id="anomalies_liens_factures_contrats_tree" model="ir.ui.view">
+            <field name="name">anomalies_liens_factures_contrats_tree</field>
+            <field name="model">account.invoice.line</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="invoice_id"                    readonly="1"/>
+                    <field name="product_id"                    readonly="1"/>
+                    <field name="name"                          readonly="1"/>
+                    <field name="is_contrat_id"                 readonly="1"/>
+                    <field name="is_contrat_detail_id" domain="[('contrat_id' ,'=',is_contrat_id)]"/>
+                    <field name="is_deja_facture"               readonly="1"/>
+                    <field name="is_reellement_facture"         readonly="1"/>
+                    <field name="is_montant_reellement_facture" readonly="1"/>
+                    <field name="quantity"                      readonly="1"/>
+                    <field name="price_unit"                    readonly="1"/>
+                    <field name="price_subtotal"                readonly="1" sum="Total"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record  id="anomalies_liens_factures_contrats_action" model="ir.actions.act_window">
+            <field name="name">Anomalies liens lignes de factures / Lignes de contrats</field>
+            <field name="res_model">account.invoice.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="limit">200</field>
+            <field name="view_mode">tree</field>
+            <field name="domain">[
+                    ('is_invoice_id','=',False),
+                    ('is_contrat_detail_id','=',False),
+                    ('price_subtotal','!=',0),
+                    ('product_id.name','not in',['Facture','Révisions']),
+                ]
+            </field>
+            <field name="view_id" ref="is_dget.anomalies_liens_factures_contrats_tree"/>
+        </record>
+    
+    
+    <!-- is.tva -->
+    <record id="is_tva_form" model="ir.ui.view">
+        <field name="name">is.tva.form</field>
+        <field name="model">is.tva</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="tax_id"/>
+                            <field name="account_id"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="is_tva_tree" model="ir.ui.view">
+        <field name="name">is.tva.tree</field>
+        <field name="model">is.tva</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="tax_id"/>
+                <field name="account_id"/>
+            </tree>
+        </field>
+    </record>
+    <record id="is_tva_search" model="ir.ui.view">
+        <field name="name">is.tva.search</field>
+        <field name="model">is.tva</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="tax_id"/>
+                <field name="account_id"/>
+           </search>
+        </field>
+    </record>
+    <record  id="is_tva_action" model="ir.actions.act_window">
+        <field name="name">TVA</field>
+        <field name="res_model">is.tva</field>
+        <field name="view_type">form</field>
+        <field name="limit">200</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+    </data>
+</odoo>
