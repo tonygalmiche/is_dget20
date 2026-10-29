@@ -5,9 +5,28 @@
         <field name="description">Groupes DGET</field>
         <field name="sequence">1</field>
     </record>
+
+    <!-- v20 : un privilège par groupe (category_id n'existe plus sur res.groups) -->
+    <record model="res.groups.privilege" id="privilege_gestionnaire_adjudicataire">
+        <field name="name">Gestionnaire adjudicataire</field>
+        <field name="sequence">10</field>
+        <field name="category_id" ref="is_groupe_dget_module_category"/>
+    </record>
+    <record model="res.groups.privilege" id="privilege_afficher_menus_non_utilises">
+        <field name="name">Afficher les menus non utilisés</field>
+        <field name="sequence">20</field>
+        <field name="category_id" ref="is_groupe_dget_module_category"/>
+    </record>
+
     <record model="res.groups" id="is_gestionnaire_adjudicataire_group" >
         <field name="name">Gestionnaire adjudicataire</field>
         <field name="comment"></field>
-        <field name="category_id" ref="is_groupe_dget_module_category"/>
+        <field name="privilege_id" ref="privilege_gestionnaire_adjudicataire"/>
+    </record>
+
+    <!-- Groupe volontairement vide : menus standard non utilisés réservés à ce groupe (masqués pour tous) -->
+    <record model="res.groups" id="is_afficher_menus_non_utilises_group">
+        <field name="name">Afficher les menus non utilisés</field>
+        <field name="privilege_id" ref="privilege_afficher_menus_non_utilises"/>
     </record>
 </odoo>

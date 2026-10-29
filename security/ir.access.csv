@@ -33,4 +33,4 @@ access_is_concours_qui,access_is_concours_qui,is.concours.qui,base.group_user,cr
 access_is_account_invoice_line,access_is_account_invoice_line,is.account.invoice.line,base.group_user,r,
 access_is_dossier_adjudicataire,access_is_dossier_adjudicataire,is.dossier.adjudicataire,base.group_user,r,
 access_is_dossier_adjudicataire_manager,access_is_dossier_adjudicataire_manager,is.dossier.adjudicataire,is_dget20.is_gestionnaire_adjudicataire_group,crud,
-access_account_invoice_dget,access_account_invoice_dget,account.invoice,base.group_user,r,
+access_account_invoice_dget,access_account_invoice_dget,account.move,base.group_user,r,

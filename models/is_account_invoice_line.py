@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from openerp import tools
-from openerp import models,fields,api
-from openerp.tools.translate import _
+from odoo import tools
+from odoo import models,fields,api
+from odoo.tools.translate import _
 
 
 class is_account_invoice_line(models.Model):
@@ -10,11 +10,11 @@ class is_account_invoice_line(models.Model):
     _order='id desc'
     _auto = False
 
-    invoice_id             = fields.Many2one('account.invoice', 'Facture')
+    invoice_id             = fields.Many2one('account.move', 'Facture')
     date_invoice           = fields.Date("Date de facturation")
 
-    invoice_line_id        = fields.Many2one('account.invoice.line', "Ligne de facture")
-    is_invoice_id          = fields.Many2one('account.invoice', 'Facture liée')
+    invoice_line_id        = fields.Many2one('account.move.line', "Ligne de facture")
+    is_invoice_id          = fields.Many2one('account.move', 'Facture liée')
 
     partner_id             = fields.Many2one('res.partner', 'Client')
     contrat_id             = fields.Many2one('is.dossier.contrat', 'Contrat')
@@ -61,14 +61,14 @@ class is_account_invoice_line(models.Model):
 
 
     def init(self):
-        cr , uid, context = self.env.args
+        cr = self.env.cr
         tools.drop_view_if_exists(cr, 'is_account_invoice_line')
         cr.execute("""
             CREATE OR REPLACE view is_account_invoice_line AS (
                 select
                     ail.id,
                     ai.id invoice_id,
-                    ai.date_invoice,
+                    ai.invoice_date date_invoice,
                     ai.partner_id,
                     ai.is_montant_revision,
                     ail.id invoice_line_id,
@@ -113,12 +113,14 @@ class is_account_invoice_line(models.Model):
 
 
 
-                from account_invoice ai join account_invoice_line            ail on ai.id=ail.invoice_id
+                from account_move ai join account_move_line                  ail on ai.id=ail.move_id
                                         join res_partner                      rp on ai.partner_id=rp.id
                                         left join is_dossier_contrat         idc on ai.is_contrat_id=idc.id
                                         left join is_dossier_contrat_detail idcd on ail.is_contrat_detail_id=idcd.id
                                         left join is_dossier                  id on idc.dossier_id=id.id
                 where ai.state not in ('draft','cancel')
+                      and ai.move_type in ('out_invoice','out_refund','in_invoice','in_refund')
+                      and ail.display_type in ('product','line_section','line_subsection','line_note')
             )
         """)
 

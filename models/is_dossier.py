@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models, _
 from datetime import date, datetime
-from odoo.exceptions import Warning
+from odoo.exceptions import UserError
 import base64
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
@@ -27,9 +27,9 @@ class IsDossier(models.Model):
     _description = "Dossier"
     _order = 'numaff desc'
     _rec_name = 'numaff'
+    _rec_names_search = ('numaff', 'nom')
 
 
-    @api.multi
     def _get_numaff(self):
         prefix = _get_prefix_annee()+'A'
         dossiers=self.env['is.dossier'].search([('numaff','like',prefix)],order="numaff desc",limit=1)
@@ -72,32 +72,17 @@ class IsDossier(models.Model):
             ('abandonne','Abandonné'),
         ],"Etat", default="en cours")
 
-    @api.multi
-    def name_get(self):
-        result = []
+    @api.depends('numaff', 'nom')
+    def _compute_display_name(self):
         for obj in self:
-            result.append((obj.id, str(obj.numaff)+u' - '+str(obj.nom)))
-        return result
+            obj.display_name = str(obj.numaff)+u' - '+str(obj.nom)
 
 
-    @api.model
-    def _name_search(self, name, args=None, operator='ilike', limit=100, name_get_uid=None):
-        args = args or []
-        ids = []
-        if name:
-            ids = self._search(['|',('numaff', 'ilike', name),('nom', 'ilike', name)] + args, limit=limit, access_rights_uid=name_get_uid)
-        else:
-            ids = self._search(args, limit=limit, access_rights_uid=name_get_uid)
-        return self.browse(ids).name_get()
-
-
-    @api.multi
     def creation_contrat_action(self, vals):
         for obj in self:
             res= {
                 'name': 'Contrat',
                 'view_mode': 'form',
-                'view_type': 'form',
                 'res_model': 'is.dossier.contrat',
                 'type': 'ir.actions.act_window',
                 'context': {'default_dossier_id': obj.id }
@@ -187,7 +172,6 @@ class IsDossierContrat(models.Model):
             obj.numligne_max=numligne_max
 
 
-    @api.multi
     def _get_numcontrat(self):
         context = self.env.context
         numcontrat=''
@@ -216,7 +200,7 @@ class IsDossierContrat(models.Model):
     num_marche    = fields.Char(u"N°Marché"    , help=u"Utilisé pour les marchés publiques")
     code_service  = fields.Char(u"Code service", help=u"Utilisé pour les marchés publiques")
     traitance_id  = fields.Many2one('is.dossier.contrat.traitance', u"Traitance", index=True)
-    invoice_ids   = fields.One2many('account.invoice', 'is_contrat_id', u'Factures', domain=[('state','not in',['cancel'])], readonly=True)
+    invoice_ids   = fields.One2many('account.move', 'is_contrat_id', u'Factures', domain=[('state','not in',['cancel'])], readonly=True)
     nb_factures   = fields.Integer(u"Nombre de factures")
     detail_ids    = fields.One2many('is.dossier.contrat.detail', 'contrat_id', u'Détail')
     restant_ht    = fields.Float(u"Restant HT"   , digits=(14,2), compute='compute_restant_ht', readonly=True, store=True)
@@ -230,12 +214,10 @@ class IsDossierContrat(models.Model):
     show_generer_facture_btn = fields.Boolean(u"Afficher bouton générer facture", compute='compute_show_generer_facture_btn', readonly=True, store=False)
 
 
-    @api.multi
     def update_restant_ht_action(self):
         for obj in self:
             obj.compute_restant_ht()
 
-    @api.multi
     def update_reellement_facture_action(self):
         for obj in self:
             obj.update_reellement_facture_contrat(update_facture=True)
@@ -291,13 +273,11 @@ class IsDossierContrat(models.Model):
             obj.anomalie = anomalie
         t_end = datetime.now()
 
-    @api.multi
     def acceder_contrat_action(self, vals):
         for obj in self:
             res= {
                 'name': 'Contrat',
                 'view_mode': 'form',
-                'view_type': 'form',
                 'res_model': 'is.dossier.contrat',
                 'res_id': obj.id,
                 'type': 'ir.actions.act_window',
@@ -305,7 +285,6 @@ class IsDossierContrat(models.Model):
             return res
 
 
-    @api.multi
     def generer_facture_action(self, vals):
         for obj in self:
 
@@ -320,12 +299,12 @@ class IsDossierContrat(models.Model):
             #** Recherche du numéro de facture *********************************
             prefix = _get_prefix_annee()+'FC'
             filtre=[
-                ('number','like',prefix),
+                ('name','like',prefix),
             ]
-            invoices = self.env['account.invoice'].search(filtre,limit=1,order='number desc')
+            invoices = self.env['account.move'].search(filtre,limit=1,order='name desc')
             suffix=1
             for invoice in invoices:
-                suffix = int(invoice.number[-3:])+1
+                suffix = int(invoice.name[-3:])+1
             suffix = ('000'+str(suffix))[-3:]
             number  = prefix+suffix
             #*******************************************************************
@@ -339,18 +318,16 @@ class IsDossierContrat(models.Model):
                 sens_facture=-1
             vals={
                 'name'              : number,
-                'origin'            : obj.name,
-                'move_name'         : number,
-                'number'            : number,
+                'invoice_origin'    : obj.name,
                 'partner_id'        : obj.client_id.id,
                 'is_contrat_id'     : obj.id,
                 'fiscal_position_id': 1,
                 'is_tva_id'         : obj.tva_id.id,
-                'type'              : invoice_type,
+                'move_type'         : invoice_type,
                 'state'             : 'draft',
             }
 
-            invoice=self.env['account.invoice'].create(vals)
+            invoice=self.env['account.move'].create(vals)
             invoice_id = invoice.id
             #*******************************************************************
 
@@ -358,18 +335,18 @@ class IsDossierContrat(models.Model):
             for line in obj.detail_ids:
                 if line.commentaire:
                     vals={
-                        'invoice_id': invoice_id,
+                        'move_id'   : invoice_id,
                         'is_contrat_detail_id': line.id,
                         'display_type': 'line_note',
                         'name'      : line.texte,
                         'quantity'  : False,
                         'account_id': False,
                     }
-                    invoice_line=self.env['account.invoice.line'].create(vals)
+                    invoice_line=self.env['account.move.line'].create(vals)
                 else:
                     quantity = line.a_facturer/100.0
                     vals={
-                        'invoice_id': invoice_id,
+                        'move_id'   : invoice_id,
                         'is_contrat_detail_id': line.id,
                         'product_id': 1,
                         'name'      : line.texte,
@@ -377,7 +354,7 @@ class IsDossierContrat(models.Model):
                         'price_unit': False,
                         'account_id': 622, #701100
                     }
-                    invoice_line=self.env['account.invoice.line'].create(vals)
+                    invoice_line=self.env['account.move.line'].create(vals)
                     line_res = invoice_line.uptate_onchange_product_id()
                     vals={
                         'name'      : line.texte,
@@ -389,28 +366,28 @@ class IsDossierContrat(models.Model):
             #** Ajout des factures réalisées ***********************************
             filtre=[
                 ('is_contrat_id','=',obj.id),
-                ('date_invoice','<=',date.today()),
+                ('invoice_date','<=',date.today()),
                 ('state','not in',['cancel']),
                 ('id','!=',invoice_id),
             ]
-            factures = self.env['account.invoice'].search(filtre,order='date_invoice')
+            factures = self.env['account.move'].search(filtre,order='invoice_date')
             for facture in factures:
                 sens_ligne_facture = 1
-                if facture.type == "out_refund":
+                if facture.move_type == "out_refund":
                     sens_ligne_facture = -1
                 vals={
-                    'invoice_id'   : invoice_id,
+                    'move_id'      : invoice_id,
                     'product_id'   : 2,
-                    'name'         : facture.number,
+                    'name'         : facture.name,
                     'quantity'     : 1,
                     'price_unit'   : 0,
                     'account_id'   : 622, #701100
                     'is_invoice_id': facture.id,
                 }
-                invoice_line=self.env['account.invoice.line'].create(vals)
+                invoice_line=self.env['account.move.line'].create(vals)
                 line_res = invoice_line.uptate_onchange_product_id()
                 vals={
-                    'name'      : facture.number,
+                    'name'      : facture.name,
                     # On veut que le montant final d'une invoice soit positif quelque soit le type d'invoice
                     # Donc on veut que les lignes des invoices précédentes soient en moins si sont type est different
                     # du type de l'invoice donc "-(sens_facture*sens_ligne_facture)"
@@ -421,9 +398,8 @@ class IsDossierContrat(models.Model):
 
             #** Recalcul de la TVA et validation de la facture *****************
             res_validate = invoice.update_tva_account_action()
-            res_validate = invoice.compute_taxes()
             try:
-               res_validate = invoice.action_invoice_open()
+               res_validate = invoice.action_post()
             except:
                continue
             #*******************************************************************
@@ -523,23 +499,23 @@ class IsDossierContratDetail(models.Model):
     montant_restant            = fields.Float(u"Montant restant à facturer", digits=(14,2), compute='_compute_facture', readonly=True, store=False)
 
 
-    @api.model
-    def create(self, vals):
-        res=super(IsDossierContratDetail, self).create(vals)
-        res.numligne = res.contrat_id.numligne_max+10
+    @api.model_create_multi
+    def create(self, vals_list):
+        res=super(IsDossierContratDetail, self).create(vals_list)
+        for obj in res:
+            obj.numligne = obj.contrat_id.numligne_max+10
         return res
 
 
-    @api.multi
     def unlink(self):
         for obj in self:
-            lines = self.env['account.invoice.line'].search([('is_contrat_detail_id','=',obj.id)])
+            lines = self.env['account.move.line'].search([('is_contrat_detail_id','=',obj.id)])
             if len(lines)>0:
                 factures=[]
                 for line in lines:
-                    factures.append(line.invoice_id.move_name)
+                    factures.append(line.move_id.name)
                 factures=", ".join(factures)
-                raise Warning("Il n'est pas possible de supprimer la ligne '%s' car elle est utilsée dans les factures %s"%(obj.texte,factures))
+                raise UserError("Il n'est pas possible de supprimer la ligne '%s' car elle est utilsée dans les factures %s"%(obj.texte,factures))
         return super(IsDossierContratDetail, self).unlink()
 
 
@@ -587,7 +563,6 @@ class IsDeclarationMAF(models.Model):
     name          = fields.Char(u"Année", required=True, index=True)
     type_document = fields.Selection([('maf',u'Déclaration MAF'),('dget','DGET')],"Type de document", default='maf')
 
-    @api.multi
     def getCodeAssurance(self,code_id):
         cr = self.env.cr
         SQL="SELECT code,ordre FROM is_dossier_code_assurance where id="+str(code_id)
@@ -601,7 +576,6 @@ class IsDeclarationMAF(models.Model):
         return code, ordre
 
 
-    @api.multi
     def get_contrats(self,obj):
         cr = self.env.cr
         SQL="""
@@ -642,14 +616,14 @@ class IsDeclarationMAF(models.Model):
 
 
 
-            from account_invoice_line ail inner join account_invoice             ai on ail.invoice_id=ai.id
+            from account_move_line ail inner join account_move                   ai on ail.move_id=ai.id
                                           inner join is_dossier_contrat         idc on ai.is_contrat_id=idc.id
                                           inner join is_dossier_contrat_detail idcd on ail.is_contrat_detail_id=idcd.id
                                           inner join res_partner                 rp on ai.partner_id=rp.id
                                           inner join is_dossier                  id on idc.dossier_id=id.id
             where 
-                ai.date_invoice>='"""+str(obj.name)+"""-01-01' and
-                ai.date_invoice<='"""+str(obj.name)+"""-12-31' and
+                ai.invoice_date>='"""+str(obj.name)+"""-01-01' and
+                ai.invoice_date<='"""+str(obj.name)+"""-12-31' and
                 ai.state not in ('draft','cancel')
             order by ai.name,ail.sequence
         """
@@ -725,7 +699,6 @@ class IsDeclarationMAF(models.Model):
             recap2.append([k,recap[k]])
         return [res,recap2]
 
-    @api.multi
     def export_excel_action(self):
         for obj in self:
             res = obj.get_contrats(obj)
@@ -914,7 +887,7 @@ class IsDeclarationMAF(models.Model):
                 'name':        name,
                 'type':        'binary',
                 'res_id':      user.id,
-                'datas':       base64.b64encode(xlsx),
+                'raw':         xlsx,
             }
             attachment_id=False
             if attachments:
@@ -954,7 +927,6 @@ class IsConcours(models.Model):
     _order = 'numconcours desc'
     _rec_name = 'numconcours'
 
-    @api.multi
     def _get_numconcours(self):
         prefix = _get_prefix_annee()+'CO'
         rows=self.env['is.concours'].search([('numconcours','like',prefix)],order="numconcours desc",limit=1)

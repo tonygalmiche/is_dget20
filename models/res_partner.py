@@ -22,29 +22,17 @@ class IsClassementFournisseur(models.Model):
     _name = 'is.classement.fournisseur'
     _description = "Classement Fournisseur"
     _order = 'code'
+    _rec_names_search = ('code', 'nature')
 
     code       = fields.Char("Code"         , required=True, index=True)
     nature     = fields.Char("Nature"       , required=True, index=True)
     classement = fields.Integer("Classement", required=True, index=True)
 
 
-    @api.multi
-    def name_get(self):
-        result = []
+    @api.depends('code', 'nature', 'classement')
+    def _compute_display_name(self):
         for obj in self:
-            result.append((obj.id, str(obj.code)+u' {'+str(obj.nature)+u'}{'+str(obj.classement)+u'}'))
-        return result
-
-
-    @api.model
-    def _name_search(self, name, args=None, operator='ilike', limit=100, name_get_uid=None):
-        args = args or []
-        ids = []
-        if name:
-            ids = self._search(['|',('code', 'ilike', name),('nature', 'ilike', name)] + args, limit=limit, access_rights_uid=name_get_uid)
-        else:
-            ids = self._search(args, limit=limit, access_rights_uid=name_get_uid)
-        return self.browse(ids).name_get()
+            obj.display_name = str(obj.code)+u' {'+str(obj.nature)+u'}{'+str(obj.classement)+u'}'
 
 
 class ResPartner(models.Model):
@@ -66,7 +54,7 @@ class ResPartner(models.Model):
 
 
     # Permet de désactiver le controle de la TVA
-    @api.constrains('vat')
-    def check_vat(self):
-        return True
+    # v20 : contrôle fait par _check_vat (à l'enregistrement de vat), gardé seulement pour la mise en forme du numéro
+    def _check_vat(self, validation="error"):
+        return super()._check_vat(validation=False)
 

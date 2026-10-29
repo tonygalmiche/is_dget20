@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models, _
-from odoo.exceptions import Warning
 from datetime import date, datetime
 
 
@@ -14,8 +13,8 @@ class IsTVA(models.Model):
     account_id = fields.Many2one('account.account', u'Compte de vente', required=True)
 
 
-class AccountInvoice(models.Model):
-    _inherit = "account.invoice"
+class AccountMove(models.Model):
+    _inherit = "account.move"
 
     @api.depends('is_contrat_id')
     def _compute_dossier_id(self):
@@ -40,7 +39,7 @@ class AccountInvoice(models.Model):
             obj.is_montant_revision = montant
             montant_hors_revision = obj.amount_untaxed - montant
             obj.is_montant_hors_revision = montant_hors_revision
-            if obj.type=="out_refund":
+            if obj.move_type=="out_refund":
                 obj.is_montant_hors_revision_signe = - montant_hors_revision
             else:
                 obj.is_montant_hors_revision_signe = montant_hors_revision
@@ -72,53 +71,45 @@ class AccountInvoice(models.Model):
             obj.is_alerte=alertes
 
 
-    @api.multi
-    def name_get(self):
-        result = []
+    def _compute_display_name(self):
         for obj in self:
-            result.append((obj.id, str(obj.name)))
-        return result
+            obj.display_name = str(obj.name)
 
 
-    @api.multi
     def _get_report_base_filename(self):
-        if self.type in ['out_invoice','in_invoice']:
+        if self.move_type in ['out_invoice','in_invoice']:
             prefix = "Facture"
         else:
             prefix = "Avoir"
         date=""
-        if self.date_invoice:
-            date = self.date_invoice.strftime('%y%m%d')
-        name="%s_%s"%(date,self.number or '')
+        if self.invoice_date:
+            date = self.invoice_date.strftime('%y%m%d')
+        name="%s_%s"%(date,self.name or '')
         return name
 
 
-    @api.multi
     def acceder_facture_action(self):
         for obj in self:
 
             res= {
                 'name': 'Facture',
                 'view_mode': 'form',
-                'view_type': 'form',
-                'res_model': 'account.invoice',
+                'res_model': 'account.move',
                 'res_id': obj.id,
                 'type': 'ir.actions.act_window',
-                'view_id': self.env.ref('account.invoice_form').id,
-                'domain': [('type','=','out_invoice')],
+                'view_id': self.env.ref('account.view_move_form').id,
+                'domain': [('move_type','=','out_invoice')],
             }
             return res
 
 
-    @api.multi
     def update_tva_account_action(self):
         for obj in self:
             print("####",obj)
             for line in obj.invoice_line_ids:
                 if line.product_id:
                     line.account_id = obj.is_tva_id.account_id.id
-                    line.invoice_line_tax_ids = [(6,0,[obj.is_tva_id.tax_id.id])]
-            obj.compute_taxes()
+                    line.tax_ids = [(6,0,[obj.is_tva_id.tax_id.id])]
         return True
 
     def update_deja_facture_recursif(self, deja_factures, visites, now):
@@ -217,7 +208,6 @@ class AccountInvoice(models.Model):
             return deja_factures, visites
 
 
-    @api.multi
     def update_deja_facture_action(self):
         # récupérer le nombre de factures sélectionnées
         n_factures = len(self)
@@ -241,23 +231,25 @@ class AccountInvoice(models.Model):
             i_start += N_max
 
 
-class AccountInvoiceLine(models.Model):
-    _inherit = "account.invoice.line"
-    _order = 'sequence,id'
+class AccountMoveLine(models.Model):
+    _inherit = "account.move.line"
 
 
-    is_contrat_id                 = fields.Many2one(related="invoice_id.is_contrat_id")
+    is_contrat_id                 = fields.Many2one(related="move_id.is_contrat_id")
     is_contrat_detail_id          = fields.Many2one('is.dossier.contrat.detail', 'Ligne Contrat', index=True)
-    is_invoice_id                 = fields.Many2one('account.invoice', 'Facture liée')
+    is_invoice_id                 = fields.Many2one('account.move', 'Facture liée')
     is_deja_facture               = fields.Float("Déjà facturé", digits=(14,6))
     is_reellement_facture         = fields.Float("Réellement facturé", digits=(14,6))
     is_montant_reellement_facture = fields.Float("Montant réellement facturé", digits=(14,2))
 
-    @api.multi
     def uptate_onchange_product_id(self):
+        # v20 : plus de _onchange_product_id, mêmes valeurs par les calculs de la ligne (les taxes de la facture se recalculent seules)
         for obj in self:
-            obj._onchange_product_id()
-            obj.invoice_id.compute_taxes()
+            obj._compute_name()
+            obj._compute_account_id()
+            obj._compute_tax_ids()
+            obj._compute_product_uom_id()
+            obj._compute_price_unit()
 
         return True
 
