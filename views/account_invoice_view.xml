@@ -9,8 +9,8 @@
             <field name="name">Actualiser TVA et Compte de vente</field>
             <field name="type">ir.actions.server</field>
             <field name="state">code</field>
-            <field name="model_id" ref="is_dget20.model_account_invoice"/>
-            <field name="binding_model_id" ref="is_dget20.model_account_invoice"/>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="binding_model_id" ref="account.model_account_move"/>
             <field name="code">
                 records.update_tva_account_action()
             </field>
@@ -21,18 +21,18 @@
             <field name="name">Actualiser réellement facturé</field>
             <field name="type">ir.actions.server</field>
             <field name="state">code</field>
-            <field name="model_id" ref="is_dget20.model_account_invoice"/>
-            <field name="binding_model_id" ref="is_dget20.model_account_invoice"/>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="binding_model_id" ref="account.model_account_move"/>
             <field name="code">
                 records.update_deja_facture_action()
             </field>
         </record>
 
-        <!-- account.invoice -->
+        <!-- account.move (account.invoice en v12) -->
         <record id="is_invoice_form" model="ir.ui.view">
             <field name="name">is_invoice_form</field>
-            <field name="model">account.invoice</field>
-            <field name="inherit_id" ref="account.invoice_form" />
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form" />
             <field name="arch" type="xml">
                 <xpath expr="//sheet[1]" position="inside">
                     <style>
@@ -44,7 +44,8 @@
                         }
                     </style>
                 </xpath>
-                <field name="partner_id" position="after">
+                <!-- v20 : client dans un div sans libellé, ajout après ce div -->
+                <xpath expr="(//field[@name='partner_id'])[1]/.." position="after">
                     <field name="is_contrat_id"/>
                     <field name="is_total_contrat_ht"/>
                     <field name="is_montant_revision"/>
@@ -52,20 +53,21 @@
                     <field name="is_dossier_id"/>
                     <field name="is_tva_id"/>
                     <field name="is_facture_payee"/>
-                </field>
+                </xpath>
                 <notebook position="before">
-                    <div style="background:orange;font-weight: bold;" attrs="{'invisible':[('is_alerte','=',False)]}">
-                        <field 
+                    <div style="background:orange;font-weight: bold;" invisible="not is_alerte">
+                        <field
                             name="is_alerte"
-                            readonly="1" nolabel="1" 
-                            attrs="{'invisible': [('is_alerte', '=', False)]}"
+                            readonly="1" nolabel="1"
+                            invisible="not is_alerte"
                         />
                     </div>
                 </notebook>
-                <xpath expr="//field[@name='invoice_line_ids']/tree" position="attributes">
+                <xpath expr="//field[@name='invoice_line_ids']/list" position="attributes">
                     <attribute name="limit">500</attribute>
                 </xpath>
-                <xpath expr="//page[1]/field[@name='invoice_line_ids']/tree/field[@name='name']" position="after">
+                <!-- v20 : produit et libellé regroupés dans la colonne product_and_description -->
+                <xpath expr="//field[@name='invoice_line_ids']/list/column[@name='product_and_description']" position="after">
                     <field name="is_contrat_detail_id"           readonly="1" domain="[('contrat_id','=',parent.is_contrat_id)]"/>
                     <field name="is_invoice_id"                  readonly="1"/>
                     <field name="is_deja_facture"                readonly="1"/>
@@ -79,33 +81,33 @@
         </record>
        <record id="is_invoice_tree" model="ir.ui.view">
             <field name="name">is_invoice_tree</field>
-            <field name="model">account.invoice</field>
-            <field name="inherit_id" ref="account.invoice_tree" />
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_invoice_tree" />
             <field name="arch" type="xml">
-                <field name="number" position="replace">
-                    <field name="move_name" string="N°Facture"/>
-                    <field name="type"/>
+                <field name="name" position="after">
+                    <field name="move_type"/>
                 </field>
-                <field name="user_id" position="replace">
+                <field name="invoice_user_id" position="replace">
                     <field name="is_contrat_id"/>
                     <field name="is_dossier_id"/>
                 </field>
-                <field name="state" position="before">
+                <!-- v20 : plus de colonne state, ancrage sur status_in_payment -->
+                <field name="status_in_payment" position="before">
                     <field name="is_montant_revision"/>
                     <field name="is_montant_hors_revision"/>
                 </field>
-                <field name="state" position="after">
+                <field name="status_in_payment" position="after">
                     <field name="is_facture_payee"/>
                 </field>
             </field>
         </record>
         <record id="is_view_account_invoice_filter" model="ir.ui.view">
             <field name="name">is_view_account_invoice_filter</field>
-            <field name="model">account.invoice</field>
+            <field name="model">account.move</field>
             <field name="inherit_id" ref="account.view_account_invoice_filter" />
             <field name="arch" type="xml">
-                <field name="user_id" position="replace">
-                    <field name="type"/>
+                <field name="invoice_user_id" position="replace">
+                    <field name="move_type"/>
                     <field name="is_contrat_id"/>
                     <field name="is_dossier_id"/>
                     <field name="is_facture_payee"/>
@@ -113,50 +115,54 @@
             </field>
         </record>
 
+        <!-- v20 : pas de vue calendrier pour account.move -->
         <record  id="is_account_invoice_action" model="ir.actions.act_window">
             <field name="name">Factures</field>
-            <field name="res_model">account.invoice</field>
-            <field name="view_mode">tree,form,calendar,graph</field>
-            <field name="view_id" ref="account.invoice_tree"/>
+            <field name="res_model">account.move</field>
+            <field name="view_mode">list,form,graph</field>
+            <field name="view_id" ref="account.view_invoice_tree"/>
             <field name="search_view_id" ref="account.view_account_invoice_filter"/>
-            <field name="domain">[('type','in',['out_invoice','out_refund'])]</field>
-            <field name="context">{'type':'out_invoice', 'journal_type': 'sale'}</field>
+            <field name="domain">[('move_type','in',['out_invoice','out_refund'])]</field>
+            <field name="context">{'default_move_type':'out_invoice', 'journal_type': 'sale'}</field>
             <field name="limit">200</field>
         </record>
         <record id="is_account_invoice_action_view1" model="ir.actions.act_window.view">
             <field eval="1" name="sequence"/>
-            <field name="view_mode">tree</field>
-            <field name="view_id" ref="account.invoice_tree_with_onboarding"/>
+            <field name="view_mode">list</field>
+            <field name="view_id" ref="account.view_out_invoice_tree"/>
             <field name="act_window_id" ref="is_account_invoice_action"/>
         </record>
         <record id="is_account_invoice_action_view2" model="ir.actions.act_window.view">
             <field eval="2" name="sequence"/>
             <field name="view_mode">form</field>
-            <field name="view_id" ref="account.invoice_form"/>
+            <field name="view_id" ref="account.view_move_form"/>
             <field name="act_window_id" ref="is_account_invoice_action"/>
         </record>
 
 
 
-        <!-- account.invoice.line -->
+        <!-- account.move.line (account.invoice.line en v12) -->
         <record id="is_view_invoice_line_form" model="ir.ui.view">
             <field name="name">is_view_invoice_line_form</field>
-            <field name="model">account.invoice.line</field>
-            <field name="inherit_id" ref="account.view_invoice_line_form" />
+            <field name="model">account.move.line</field>
+            <field name="inherit_id" ref="account.view_move_line_form" />
             <field name="arch" type="xml">
-                <field name="price_unit" position="after">
+                <!-- v20 : pas de price_unit dans le formulaire de la ligne -->
+                <field name="quantity" position="after">
                     <field name="is_contrat_detail_id" readonly="1"/>
                     <field name="is_invoice_id"        readonly="1"/>
                     <field name="is_deja_facture"      readonly="1"/>
                 </field>
             </field>
         </record>
+        <!-- v20 : priorité 99 pour ne pas remplacer la recherche standard des écritures (account.move.line) -->
         <record id="account_invoice_line_search" model="ir.ui.view">
             <field name="name">account_invoice_line_search</field>
-            <field name="model">account.invoice.line</field>
+            <field name="model">account.move.line</field>
+            <field name="priority">99</field>
             <field name="arch" type="xml">
                 <search>
-                    <field name="invoice_id"/>
+                    <field name="move_id"/>
                     <field name="product_id"/>
                     <field name="name"/>
                     <field name="is_contrat_id"/>
@@ -165,10 +171,10 @@
         </record>
         <record id="anomalies_liens_factures_contrats_tree" model="ir.ui.view">
             <field name="name">anomalies_liens_factures_contrats_tree</field>
-            <field name="model">account.invoice.line</field>
+            <field name="model">account.move.line</field>
             <field name="arch" type="xml">
-                <tree editable="bottom">
-                    <field name="invoice_id"                    readonly="1"/>
+                <list editable="bottom">
+                    <field name="move_id"                       readonly="1"/>
                     <field name="product_id"                    readonly="1"/>
                     <field name="name"                          readonly="1"/>
                     <field name="is_contrat_id"                 readonly="1"/>
@@ -179,19 +185,21 @@
                     <field name="quantity"                      readonly="1"/>
                     <field name="price_unit"                    readonly="1"/>
                     <field name="price_subtotal"                readonly="1" sum="Total"/>
-                </tree>
+                </list>
             </field>
         </record>
 
 
+        <!-- v20 : account.move.line contient toutes les écritures : limité aux lignes de factures, comme account.invoice.line -->
         <record  id="anomalies_liens_factures_contrats_action" model="ir.actions.act_window">
             <field name="name">Anomalies liens lignes de factures / Lignes de contrats</field>
-            <field name="res_model">account.invoice.line</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree</field>
+            <field name="res_model">account.move.line</field>
             <field name="limit">200</field>
-            <field name="view_mode">tree</field>
+            <field name="view_mode">list</field>
+            <field name="search_view_id" ref="account_invoice_line_search"/>
             <field name="domain">[
+                    ('move_id.move_type','in',['out_invoice','out_refund','in_invoice','in_refund']),
+                    ('display_type','=','product'),
                     ('is_invoice_id','=',False),
                     ('is_contrat_detail_id','=',False),
                     ('price_subtotal','!=',0),
@@ -224,11 +232,11 @@
         <field name="name">is.tva.tree</field>
         <field name="model">is.tva</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name"/>
                 <field name="tax_id"/>
                 <field name="account_id"/>
-            </tree>
+            </list>
         </field>
     </record>
     <record id="is_tva_search" model="ir.ui.view">
@@ -245,9 +253,8 @@
     <record  id="is_tva_action" model="ir.actions.act_window">
         <field name="name">TVA</field>
         <field name="res_model">is.tva</field>
-        <field name="view_type">form</field>
         <field name="limit">200</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
 
