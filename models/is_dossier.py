@@ -189,7 +189,7 @@ class IsDossierContrat(models.Model):
 
     @api.multi
     def _get_numcontrat(self):
-        context = self._context
+        context = self.env.context
         numcontrat=''
         if 'active_id' in context:
             dossier_id = context['active_id']
@@ -589,7 +589,7 @@ class IsDeclarationMAF(models.Model):
 
     @api.multi
     def getCodeAssurance(self,code_id):
-        cr = self._cr
+        cr = self.env.cr
         SQL="SELECT code,ordre FROM is_dossier_code_assurance where id="+str(code_id)
         cr.execute(SQL)
         rows = cr.fetchall()
@@ -603,7 +603,7 @@ class IsDeclarationMAF(models.Model):
 
     @api.multi
     def get_contrats(self,obj):
-        cr = self._cr
+        cr = self.env.cr
         SQL="""
             select 
                 idcd.codass1_id,
@@ -906,7 +906,7 @@ class IsDeclarationMAF(models.Model):
             # #******************************************************************
 
             # ** Creation ou modification de la pièce jointe ******************
-            user  = self.env['res.users'].browse(self._uid)
+            user  = self.env['res.users'].browse(self.env.uid)
             attachment_obj = self.env['ir.attachment']
             attachments = attachment_obj.search([('res_id','=',user.id),('name','=',name)])
             xlsx = open(path,'rb').read()
