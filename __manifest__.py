@@ -19,6 +19,8 @@ InfoSaône - Module Odoo 20 pour DGET
         'product',
         'is_theme_entreprise',  # couleur de l'entreprise (module générique)
         'is_interface_epuree',  # page de connexion épurée, inscription sur invitation (module générique)
+        # Menu masqué (views/menu.xml)
+        'mail',
     ],
     'data' : [
         'security/res.groups.xml',
@@ -28,7 +30,7 @@ InfoSaône - Module Odoo 20 pour DGET
         'views/is_dossier_views.xml',
         'views/account_invoice_view.xml',
         'views/is_account_invoice_line_views.xml',
-        # 'views/menu.xml',
+        'views/menu.xml',
         # 'report/report_templates.xml',
         # 'report/report_invoice.xml',
         # 'report/report_is_dossier.xml',

@@ -2,11 +2,10 @@
 <odoo>
     <data>
 
-        <!-- Déplacement du menu 'Messages' dans le menu 'Technique' -->
-        <menuitem   
-            id="mail.menu_root_discuss"
-            parent="base.menu_custom"
-        />
+        <!-- Menu Discussion masqué : réservé au groupe volontairement vide (en v12, déplacé dans Technique) -->
+        <record id="mail.menu_root_discuss" model="ir.ui.menu">
+            <field name="group_ids" eval="[Command.set([ref('is_afficher_menus_non_utilises_group')])]"/>
+        </record>
 
         <menuitem
             name="DGET"
@@ -27,7 +26,7 @@
             <field name="sequence">15</field>
             <field name="action"    ref="is_concours_action"/>
             <field name="parent_id" eval="ref('is_dget_main_menu')"/>
-            <field name="groups_id" eval="[(6,0,[
+            <field name="group_ids" eval="[(6,0,[
                 ref('sales_team.group_sale_manager'),
             ])]"/>
         </record>
@@ -50,7 +49,7 @@
             <field name="sequence">23</field>
             <field name="action"    ref="is_dossier_adjudicataire_action"/>
             <field name="parent_id" eval="ref('is_dget_main_menu')"/>
-            <field name="groups_id" eval="[(6,0,[
+            <field name="group_ids" eval="[(6,0,[
                 ref('is_dget20.is_gestionnaire_adjudicataire_group'),
             ])]"/>
         </record>
@@ -62,7 +61,7 @@
             <field name="name">Contrats</field>
             <field name="sequence">25</field>
             <field name="parent_id" eval="ref('is_dget_main_menu')"/>
-            <field name="groups_id" eval="[(6,0,[
+            <field name="group_ids" eval="[(6,0,[
                 ref('sales_team.group_sale_manager'),
             ])]"/>
         </record>
@@ -131,7 +130,7 @@
             <field name="name">Factures</field>
             <field name="sequence">30</field>
             <field name="parent_id" eval="ref('is_dget_main_menu')"/>
-            <field name="groups_id" eval="[(6,0,[
+            <field name="group_ids" eval="[(6,0,[
                 ref('sales_team.group_sale_manager'),
             ])]"/>
         </record>
@@ -144,7 +143,7 @@
         <record id="is_invoice_out_refund_menu" model="ir.ui.menu" >
             <field name="name">Avoirs</field>
             <field name="sequence">20</field>
-            <field name="action"    ref="account.action_invoice_out_refund"/>
+            <field name="action"    ref="account.action_move_out_refund_type_non_legacy"/>
             <field name="parent_id" eval="ref('is_account_invoice_main_menu')"/>
         </record>
         <record id="is_account_invoice_line_menu" model="ir.ui.menu" >
@@ -172,7 +171,7 @@
             <field name="sequence">35</field>
             <field name="action"    ref="is_declaration_maf_action"/>
             <field name="parent_id" eval="ref('is_dget_main_menu')"/>
-            <field name="groups_id" eval="[(6,0,[
+            <field name="group_ids" eval="[(6,0,[
                 ref('sales_team.group_sale_manager'),
             ])]"/>
         </record>
@@ -193,7 +192,7 @@
             <field name="name">Tables</field>
             <field name="sequence">90</field>
             <field name="parent_id" eval="ref('is_dget_main_menu')"/>
-            <field name="groups_id" eval="[(6,0,[
+            <field name="group_ids" eval="[(6,0,[
                 ref('sales_team.group_sale_manager'),
             ])]"/>
         </record>
