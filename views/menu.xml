@@ -21,15 +21,7 @@
             action="is_adresses_action"
         />
 
-     <!-- Concours -->
-        <!-- <menuitem   
-            name="Concours"  
-            id="is_concours_main_menu"
-            parent="is_dget_main_menu"
-            sequence="15"
-            action="is_concours_action"
-        />
- -->
+        <!-- Concours -->
         <record id="is_concours_main_menu" model="ir.ui.menu" >
             <field name="name">Concours</field>
             <field name="sequence">15</field>
@@ -113,13 +105,6 @@
             sequence="40"
             action="is_dossier_contrat_detail_maf_action"
         />
-        <!-- <menuitem
-            id="is_dossier_contrat_detail_facturable_menu"
-            name="Détail Contrat Facturable"
-            parent="is_contrat_main_menu"
-            sequence="50"
-            action="is_dossier_contrat_detail_facturable_action"
-        /> -->
         <menuitem
             id="is_dossier_contrat_detail_encours_a_facturer_menu"
             name="Détail contrat Encours + A facturer"
@@ -181,15 +166,7 @@
 
 
 
-        <!-- Factures -->
-        <!-- <menuitem   
-            name="Déclaration MAF"  
-            id="is_declaration_maf_menu"
-            parent="is_dget_main_menu"
-            sequence="35"
-            action="is_declaration_maf_action"
-        />
- -->
+        <!-- Déclaration MAF -->
         <record id="is_declaration_maf_menu" model="ir.ui.menu" >
             <field name="name">Déclaration MAF</field>
             <field name="sequence">35</field>

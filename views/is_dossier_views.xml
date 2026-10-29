@@ -315,7 +315,6 @@
                             <field name="code_service"/>
                             <field name="traitance_id"/>
                             <field name="numligne_max" invisible="1"/>
-                            <!-- <field name="anomalie"/> -->
                         </group>
                     </group>
                     <group string="Composition du contrat">
@@ -330,11 +329,9 @@
                                 <field name="nota"/>
                                 <field name="facturable"/>
                                 <field name="a_facturer"/>
-                                <!-- <field name="facture"/> -->
                                 <field name="facture_recursif"/>
                                 <field name="montant_facture"    sum="Total"/>
                                 <field name="montant_a_facturer" sum="Total"/>
-                                <!--<field name="facture_le" readonly="1"/>-->
                             </tree>
                             <form>
                                 <group>
@@ -774,7 +771,6 @@
                 <field name="numligne"/>
                 <field name="phase_id"/>
                 <field name="a_facturer"         sum="Total"/>
-                <!-- <field name="facture"            sum="Total"/> -->
                 <field name="facture_recursif"   sum="Total"/>
                 <field name="montant_facture"    sum="Total"/>
                 <field name="montant_a_facturer" sum="Total"/>

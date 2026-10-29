@@ -171,7 +171,6 @@ class AccountInvoice(models.Model):
 
             # case de base 2: on a pas de factures liées
             if obj not in visites and factures == []:
-                #print('cas de base 2: pas de facture enfant')
                 for line in services:
 
                     # mettre à jour odoo, la colonne reellement factures
@@ -192,7 +191,6 @@ class AccountInvoice(models.Model):
             # ------------- Cas général: traitement des fils ------------------
             # Cas général: 
             if obj not in visites and factures:
-                #print("cas général avec %d fils et %d services " %(len(factures), len(services)))
                 # Récupérer les déjà factures et visites des fils un à un 
                 for line in factures:
                     deja_factures, visites = line.is_invoice_id.update_deja_facture_recursif(deja_factures, visites, now)
@@ -245,7 +243,6 @@ class AccountInvoice(models.Model):
 
 class AccountInvoiceLine(models.Model):
     _inherit = "account.invoice.line"
-    #_order = 'is_contrat_detail_id'
     _order = 'sequence,id'
 
 
@@ -260,8 +257,6 @@ class AccountInvoiceLine(models.Model):
     def uptate_onchange_product_id(self):
         for obj in self:
             obj._onchange_product_id()
-            #obj._compute_price()
-            #obj._set_taxes()
             obj.invoice_id.compute_taxes()
 
         return True

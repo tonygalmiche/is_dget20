@@ -122,16 +122,3 @@ class is_account_invoice_line(models.Model):
             )
         """)
 
-        # SQL="""
-        #     select 
-        #     from account_invoice_line ail inner join account_invoice             ai on ail.invoice_id=ai.id
-        #                                   inner join is_dossier_contrat         idc on ai.is_contrat_id=idc.id
-        #                                   inner join is_dossier_contrat_detail idcd on ail.is_contrat_detail_id=idcd.id
-        #                                   inner join res_partner                 rp on ai.partner_id=rp.id
-        #                                   inner join is_dossier                  id on idc.dossier_id=id.id
-        #     where 
-        #         ai.date_invoice>='"""+str(obj.name)+"""-01-01' and
-        #         ai.date_invoice<='"""+str(obj.name)+"""-12-31'
-        #     order by ai.name,ail.sequence
-        # """
-

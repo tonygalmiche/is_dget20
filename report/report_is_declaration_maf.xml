@@ -20,40 +20,6 @@
     </record>
 
 
-
-
-
-
-<!--
-    <template id="report_layout" name="Report layout">&lt;!DOCTYPE html&gt;
-        <html t-att-lang="lang and lang.replace('_', '-')"
-              t-att-data-report-margin-top="data_report_margin_top"
-              t-att-data-report-header-spacing="data_report_header_spacing"
-              t-att-data-report-dpi="data_report_dpi"
-              t-att-data-report-landscape="data_report_landscape"
-              t-att-web-base-url="web_base_url">
-            <head>
-                <meta charset="utf-8"/>
-                <meta name="viewport" content="initial-scale=1"/>
-                <title><t t-esc="title or 'Odoo Report'"/></title>
-                <t t-call-assets="web.report_assets_common" t-js="false"/>
-                <t t-call-assets="web.assets_common" t-css="false"/>
-                <t t-call-assets="web.report_assets_common" t-css="false"/>
-            </head>
-            <body t-att-class="'container' if not full_width else 'container-fluid'">
-                <div id="wrapwrap">
-                    <main>
-                        <t t-raw="0"/>
-                    </main>
-                </div>
-            </body>
-        </html>
-    </template>
--->
-
-
-
-
     <template id="html_container">
         <t t-set="body_classname" t-value="'container'"/>
         <t t-call="web.report_layout">
@@ -62,58 +28,12 @@
     </template>
 
 
-
-    <!--
-
-    <template id="external_layout_standard">
-        <div class="header">
-            <div class="row">
-                <div class="col-12" style="text-align:center">
-                    test
-                    <img t-att-src="'/is_dget/static/src/img/declaration-maf.png'" style="width:100%"/>
-                    test
-                </div>
-            </div>
-        </div>
-        <t t-raw="0"/>
-        <div class="footer o_standard_footer">
-            <div class="row">
-                <div class="col-12" style="text-align:center">
-                    Page <span class="page"/> / <span class="topage"/>
-                </div>
-            </div>
-        </div>
-    </template>
-    -->
-
-
     <template id="external_layout_standard">
         <div t-attf-class="header o_company_#{company.id}_layout">
 
             <div class="row">
                 <img t-att-src="'/is_dget/static/src/img/declaration-maf.png'" style="width:100%"/>
             </div>
-
-            <!--
-            <div class="row">
-                <div class="col-3 mb4">
-                    <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" style="max-height: 45px;" alt="Logo"/>
-                </div>
-                <div class="col-9 text-right" style="margin-top:22px;" t-field="company.report_header" name="moto"/>
-            </div>
-            <div t-if="company.logo or company.report_header" class="row zero_min_height">
-                <div class="col-12">
-                    <div style="border-bottom: 1px solid black;"/>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-6" name="company_address">
-                    <div t-field="company.partner_id"
-                        t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'
-                    />
-                </div>
-            </div>
-            -->
         </div>
 
         <div t-attf-class="article o_report_layout_standard o_company_#{company.id}_layout"  t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')">
@@ -126,23 +46,6 @@
 
 
                 Page <span class="page"/> / <span class="topage"/>
-
-                <!--
-                <ul class="list-inline mb4">
-                    <li t-if="company.phone" class="list-inline-item d-inline">Phone: <span t-field="company.phone"/></li>
-                    <li t-if="company.email" class="list-inline-item d-inline">Email: <span t-field="company.email"/></li>
-                    <li t-if="company.website" class="list-inline-item d-inline">Web: <span t-field="company.website"/></li>
-                    <li t-if="company.vat" class="list-inline-item d-inline"><t t-esc="company.country_id.vat_label or 'Tax ID'"/>: <span t-field="company.vat"/></li>
-                </ul>
-
-                <div name="financial_infos">
-                    <span t-field="company.report_footer"/>
-                </div>
-
-                <div t-if="report_type == 'pdf'" class="text-muted">
-                    Page: <span class="page"/> / <span class="topage"/>
-                </div>
-                -->
             </div>
         </div>
     </template>
@@ -345,11 +248,6 @@
         paperformat="is_dget.is_declaration_maf_paperformat"
 
     />
-    <!--
-    <record id="is_dget.is_declaration_maf_report" model="ir.actions.report.xml">
-        <field name="paperformat_id" ref="is_dget.is_declaration_maf_paperformat"/>
-    </record>
-    -->
 
 </data>
 </odoo>
