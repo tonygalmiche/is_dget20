@@ -59,7 +59,7 @@ class is_account_invoice_line(models.Model):
 
 
 
- 
+
     def init(self):
         cr , uid, context = self.env.args
         tools.drop_view_if_exists(cr, 'is_account_invoice_line')
@@ -113,7 +113,7 @@ class is_account_invoice_line(models.Model):
 
 
 
-                from account_invoice ai join account_invoice_line            ail on ai.id=ail.invoice_id 
+                from account_invoice ai join account_invoice_line            ail on ai.id=ail.invoice_id
                                         join res_partner                      rp on ai.partner_id=rp.id
                                         left join is_dossier_contrat         idc on ai.is_contrat_id=idc.id
                                         left join is_dossier_contrat_detail idcd on ail.is_contrat_detail_id=idcd.id
