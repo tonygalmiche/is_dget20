@@ -26,6 +26,14 @@
                 <field name="is_acces_pro_pwd"     invisible="not is_company or not is_fournisseur"/>
             </field>
             <!-- v20 : title (supprimé) et customer / supplier (supprimés en v13) recréés, aux mêmes places qu'en v12 -->
+            <!-- v20 : mobile supprimé d'Odoo, recréé sous le téléphone (comme Fromtome) -->
+            <xpath expr="(//field[@name='phone'])[1]/.." position="after">
+                <label for="is_mobile" class="d-md-none"/>
+                <div class="d-flex align-items-baseline w-md-50 gap-2">
+                    <i class="oi oi-filled d-none d-md-inline-flex" data-icon="smartphone" title="Mobile"/>
+                    <field name="is_mobile" widget="phone" placeholder="Mobile"/>
+                </div>
+            </xpath>
             <xpath expr="(//field[@name='function'])[1]" position="after">
                 <field name="is_titre_id" options="{'no_open': True}" invisible="is_company"/>
             </xpath>

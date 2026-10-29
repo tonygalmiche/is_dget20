@@ -65,6 +65,7 @@ class ResPartner(models.Model):
     is_client                    = fields.Boolean("Client")
     is_fournisseur               = fields.Boolean("Fournisseur")
     is_titre_id                  = fields.Many2one('is.titre', "Titre")
+    is_mobile                    = fields.Char("Mobile")  # mobile supprimé d'Odoo en v20, recréé (1 921 contacts en v12)
 
 
     # En v20, is_company est calculé (sans parent et avec un n° de TVA) : redevient une case à cocher
