@@ -312,7 +312,7 @@
                         </group>
                     </group>
                     <group string="Composition du contrat">
-                        <field name="detail_ids" nolabel="1" context="{'dossier_id': active_id,'test':id}">
+                        <field name="detail_ids" nolabel="1" context="{'dossier_id': dossier_id,'test':id}">
                             <list decoration-info="commentaire == True">
                                 <field name="numligne" widget="handle"/>
                                 <field name="commentaire" invisible="1"/>
