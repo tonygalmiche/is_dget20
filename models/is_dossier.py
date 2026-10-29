@@ -430,6 +430,9 @@ class IsDossierContratDetail(models.Model):
     @api.depends('a_facturer')
     def _compute_facture(self):
         for obj in self:
+            # v20 : un champ calculé doit recevoir une valeur (« Compute method failed to assign ») ; jamais calculé en
+            # v12 => toujours 0
+            obj.facture = 0
             obj.montant_a_facturer = obj.montant_ht*(obj.a_facturer-obj.facture_recursif)/100
             obj.montant_facture    = obj.montant_ht*(obj.facture_recursif)/100
             encours=0
