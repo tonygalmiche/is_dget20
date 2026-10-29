@@ -22,8 +22,7 @@ InfoSaône - Module Odoo 20 pour DGET
     ],
     'data' : [
         'security/res.groups.xml',
-        'security/ir.model.access.csv',
-        'security/ir.model.access.xml',
+        'security/ir.access.csv',
         'views/res_partner_views.xml',
         'views/is_dossier_views.xml',
         'views/account_invoice_view.xml',
