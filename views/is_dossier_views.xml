@@ -261,8 +261,8 @@
         <field name="name">Actualiser Restant HT et Facturable HT</field>
         <field name="type">ir.actions.server</field>
         <field name="state">code</field>
-        <field name="model_id" ref="is_dget.model_is_dossier_contrat"/>
-        <field name="binding_model_id" ref="is_dget.model_is_dossier_contrat"/>
+        <field name="model_id" ref="is_dget20.model_is_dossier_contrat"/>
+        <field name="binding_model_id" ref="is_dget20.model_is_dossier_contrat"/>
         <field name="code">
             records.update_restant_ht_action()
         </field>
@@ -272,8 +272,8 @@
         <field name="name">Actualiser réellement facturé</field>
         <field name="type">ir.actions.server</field>
         <field name="state">code</field>
-        <field name="model_id" ref="is_dget.model_is_dossier_contrat"/>
-        <field name="binding_model_id" ref="is_dget.model_is_dossier_contrat"/>
+        <field name="model_id" ref="is_dget20.model_is_dossier_contrat"/>
+        <field name="binding_model_id" ref="is_dget20.model_is_dossier_contrat"/>
         <field name="code">
             records.update_reellement_facture_action()
         </field>
@@ -757,7 +757,7 @@
         <field name="view_type">form</field>
         <field name="limit">200</field>
         <field name="view_mode">tree,form</field>
-        <field name="view_id" ref="is_dget.is_dossier_contrat_detail_maf_tree"/>
+        <field name="view_id" ref="is_dget20.is_dossier_contrat_detail_maf_tree"/>
     </record>
 
 
@@ -783,7 +783,7 @@
         <field name="view_type">form</field>
         <field name="limit">200</field>
         <field name="view_mode">tree,form</field>
-        <field name="view_id" ref="is_dget.is_dossier_contrat_detail_facturable_tree"/>
+        <field name="view_id" ref="is_dget20.is_dossier_contrat_detail_facturable_tree"/>
     </record>
 
 
@@ -818,7 +818,7 @@
         <field name="view_type">form</field>
         <field name="limit">1000</field>
         <field name="view_mode">tree,form</field>
-        <field name="view_id" ref="is_dget.is_dossier_contrat_detail_encours_a_facturer_tree"/>
+        <field name="view_id" ref="is_dget20.is_dossier_contrat_detail_encours_a_facturer_tree"/>
         <field name="domain">[
             ('facturable','=','oui'),
             ('state'     ,'=','en_cours'),

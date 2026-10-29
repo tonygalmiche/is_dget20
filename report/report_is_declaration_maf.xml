@@ -32,7 +32,7 @@
         <div t-attf-class="header o_company_#{company.id}_layout">
 
             <div class="row">
-                <img t-att-src="'/is_dget/static/src/img/declaration-maf.png'" style="width:100%"/>
+                <img t-att-src="'/is_dget20/static/src/img/declaration-maf.png'" style="width:100%"/>
             </div>
         </div>
 
@@ -73,7 +73,7 @@
                 <t t-set="company" t-value="res_company"/>
             </t>
         </t>
-        <t t-call="is_dget.external_layout_standard">
+        <t t-call="is_dget20.external_layout_standard">
             <t t-raw="0"/>
         </t>
 
@@ -83,8 +83,8 @@
 
 
     <template id="report_is_declaration_maf_document">
-        <t t-call="is_dget.html_container">
-        <t t-call="is_dget.external_layout">
+        <t t-call="is_dget20.html_container">
+        <t t-call="is_dget20.external_layout">
 
 
             <style>
@@ -230,9 +230,9 @@
     </template>
     
     <template id="report_is_declaration_maf">
-        <t t-call="is_dget.html_container">
+        <t t-call="is_dget20.html_container">
             <t t-foreach="docs" t-as="o">
-                <t t-call="is_dget.report_is_declaration_maf_document" />
+                <t t-call="is_dget20.report_is_declaration_maf_document" />
             </t>
         </t>
     </template>
@@ -243,9 +243,9 @@
         string="Déclaration MAF"
         model="is.declaration.maf" 
         report_type="qweb-pdf"
-        file="is_dget.report_is_declaration_maf" 
-        name="is_dget.report_is_declaration_maf" 
-        paperformat="is_dget.is_declaration_maf_paperformat"
+        file="is_dget20.report_is_declaration_maf" 
+        name="is_dget20.report_is_declaration_maf" 
+        paperformat="is_dget20.is_declaration_maf_paperformat"
 
     />
 

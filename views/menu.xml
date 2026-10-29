@@ -51,7 +51,7 @@
             <field name="action"    ref="is_dossier_adjudicataire_action"/>
             <field name="parent_id" eval="ref('is_dget_main_menu')"/>
             <field name="groups_id" eval="[(6,0,[
-                ref('is_dget.is_gestionnaire_adjudicataire_group'),
+                ref('is_dget20.is_gestionnaire_adjudicataire_group'),
             ])]"/>
         </record>
 

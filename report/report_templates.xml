@@ -5,7 +5,7 @@
             <div class="header">
                 <div class="row">
                     <div class="col-12" style="text-align:center">
-                        <img t-att-src="'/is_dget/static/src/img/bandeau-dget.png'" style="width:100%"/>
+                        <img t-att-src="'/is_dget20/static/src/img/bandeau-dget.png'" style="width:100%"/>
                     </div>
                 </div>
             </div>

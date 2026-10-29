@@ -53,7 +53,7 @@
     <template id="report_is_dossier">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
-                <t t-call="is_dget.report_is_dossier_document" />
+                <t t-call="is_dget20.report_is_dossier_document" />
             </t>
         </t>
     </template>
@@ -64,8 +64,8 @@
         string="Etiquettes du dossier"
         model="is.dossier" 
         report_type="qweb-pdf"
-        file="is_dget.report_is_dossier" 
-        name="is_dget.report_is_dossier" 
+        file="is_dget20.report_is_dossier" 
+        name="is_dget20.report_is_dossier" 
     />
 
 </data>
