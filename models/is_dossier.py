@@ -48,8 +48,8 @@ class IsDossier(models.Model):
     codepostal           = fields.Char("Code postal")
     lieu                 = fields.Char("Ville")
     numconcours          = fields.Char("Numéro de concours")
-    m_ouvrage_id         = fields.Many2one('res.partner', u"Maitre d'ouvrage", domain=[('is_company','=',True)])
-    m_oeuvre_id          = fields.Many2one('res.partner', u"Maitre d'oeuvre" , domain=[('is_company','=',True)])
+    m_ouvrage_id         = fields.Many2one('res.partner', "Maitre d'ouvrage", domain=[('is_company','=',True)])
+    m_oeuvre_id          = fields.Many2one('res.partner', "Maitre d'oeuvre" , domain=[('is_company','=',True)])
     date                 = fields.Date("Date")
     surface              = fields.Float("Surface")
     montant_ope          = fields.Float("Montant de l'opération")
@@ -60,12 +60,12 @@ class IsDossier(models.Model):
     fiche                = fields.Selection([('oui','Oui'),('non','Non')],"Fiche")
     distance             = fields.Float("Distance")
     duree                = fields.Float("Durée")
-    service_executant    = fields.Char(u"Service exécutant", help=u"Nécessaire pour Chorus Pro")
-    num_marche           = fields.Char(u"N° marché"        , help=u"Nécessaire pour Chorus Pro")
-    note_ids             = fields.One2many('is.dossier.note', 'dossier_id', u'Notes')
-    referencee_ids       = fields.Many2many('is.dossier.reference', 'is_dossier_is_reference_rel', 'dossier_id', 'reference_id', u'Références')
-    contrat_ids          = fields.One2many('is.dossier.contrat', 'dossier_id', u'Contrats')
-    adjudicataire_ids    = fields.One2many('is.dossier.adjudicataire', 'dossier_id', u'Adjudicataires')
+    service_executant    = fields.Char("Service exécutant", help="Nécessaire pour Chorus Pro")
+    num_marche           = fields.Char("N° marché"        , help="Nécessaire pour Chorus Pro")
+    note_ids             = fields.One2many('is.dossier.note', 'dossier_id', 'Notes')
+    referencee_ids       = fields.Many2many('is.dossier.reference', 'is_dossier_is_reference_rel', 'dossier_id', 'reference_id', 'Références')
+    contrat_ids          = fields.One2many('is.dossier.contrat', 'dossier_id', 'Contrats')
+    adjudicataire_ids    = fields.One2many('is.dossier.adjudicataire', 'dossier_id', 'Adjudicataires')
     state                = fields.Selection([
             ('en cours' ,'En cours'),
             ('termine'  ,'Terminé'),
@@ -75,7 +75,7 @@ class IsDossier(models.Model):
     @api.depends('numaff', 'nom')
     def _compute_display_name(self):
         for obj in self:
-            obj.display_name = str(obj.numaff)+u' - '+str(obj.nom)
+            obj.display_name = str(obj.numaff)+' - '+str(obj.nom)
 
 
     def creation_contrat_action(self, vals=False):
@@ -97,10 +97,10 @@ class IsDossierAdjudicataire(models.Model):
 
     dossier_id       = fields.Many2one('is.dossier', 'Dossier', required=True)
     retenu           = fields.Selection([('oui','Oui'),('non','Non')],"Retenu")
-    adjudicataire_id = fields.Many2one('res.partner', u"Adjudicataire", index=True)
-    montant          = fields.Float(u"Montant du lot"   , digits=(14,2))
-    nomdulot         = fields.Char(u"Nom du lot")
-    notes            = fields.Text(u"Notes")
+    adjudicataire_id = fields.Many2one('res.partner', "Adjudicataire", index=True)
+    montant          = fields.Float("Montant du lot"   , digits=(14,2))
+    nomdulot         = fields.Char("Nom du lot")
+    notes            = fields.Text("Notes")
 
 
 class IsDossierNote(models.Model):
@@ -118,26 +118,26 @@ class IsDossierNote(models.Model):
 
 class IsDossierReference(models.Model):
     _name = 'is.dossier.reference'
-    _description = u"Référence Dossier"
+    _description = "Référence Dossier"
     _order = 'name'
 
-    name        = fields.Char(u"Référence dossier", required=True, index=True)
-    idreference = fields.Integer(u"idreference")
+    name        = fields.Char("Référence dossier", required=True, index=True)
+    idreference = fields.Integer("idreference")
 
 
 class IsDossierContratTraitance(models.Model):
     _name = 'is.dossier.contrat.traitance'
-    _description = u"Traitance Contrat"
+    _description = "Traitance Contrat"
     _order = 'name'
 
-    name   = fields.Char(u"Traitance", required=True, index=True)
-    code   = fields.Char(u"Code")
-    active = fields.Boolean(u"Active", default=True)
+    name   = fields.Char("Traitance", required=True, index=True)
+    code   = fields.Char("Code")
+    active = fields.Boolean("Active", default=True)
 
 
 class IsDossierContrat(models.Model):
     _name = 'is.dossier.contrat'
-    _description = u"Contrat"
+    _description = "Contrat"
     _order = 'name desc'
 
 
@@ -187,31 +187,31 @@ class IsDossierContrat(models.Model):
         return numcontrat
 
 
-    name          = fields.Char(u"Numero de contrat", required=True, index=True, default=lambda self: self._get_numcontrat())
+    name          = fields.Char("Numero de contrat", required=True, index=True, default=lambda self: self._get_numcontrat())
     signe         = fields.Selection([('oui','Oui'),('non','Non')],"Signé")
-    dossier_id    = fields.Many2one('is.dossier', u"Dossier", index=True, required=True, ondelete='cascade')
-    client_id     = fields.Many2one('res.partner', u"Client", index=True)
-    description   = fields.Char(u"Description du contrat")
-    notes         = fields.Text(u"Notes")
-    condreglement = fields.Text(u"Condition de règlement")
-    delaipaiement = fields.Text(u"Délai de paiement")
-    date          = fields.Date(u"Date de signature")
-    refclient     = fields.Char(u"N°Commande client", help=u"Utilisé pour les marchés publiques")
-    num_marche    = fields.Char(u"N°Marché"    , help=u"Utilisé pour les marchés publiques")
-    code_service  = fields.Char(u"Code service", help=u"Utilisé pour les marchés publiques")
-    traitance_id  = fields.Many2one('is.dossier.contrat.traitance', u"Traitance", index=True)
-    invoice_ids   = fields.One2many('account.move', 'is_contrat_id', u'Factures', domain=[('state','not in',['cancel'])], readonly=True)
-    nb_factures   = fields.Integer(u"Nombre de factures")
-    detail_ids    = fields.One2many('is.dossier.contrat.detail', 'contrat_id', u'Détail')
-    restant_ht    = fields.Float(u"Restant HT"   , digits=(14,2), compute='compute_restant_ht', readonly=True, store=True)
-    facturable_ht = fields.Float(u"Facturable HT", digits=(14,2), compute='compute_restant_ht', readonly=True, store=True)
-    heure_ids     = fields.One2many('is.salarie.heure', 'contrat_id', u'Heures', readonly=True)
-    tva_id        = fields.Many2one('is.tva', u'TVA')
-    anomalie      = fields.Float(u"Anomalie", default=0)
+    dossier_id    = fields.Many2one('is.dossier', "Dossier", index=True, required=True, ondelete='cascade')
+    client_id     = fields.Many2one('res.partner', "Client", index=True)
+    description   = fields.Char("Description du contrat")
+    notes         = fields.Text("Notes")
+    condreglement = fields.Text("Condition de règlement")
+    delaipaiement = fields.Text("Délai de paiement")
+    date          = fields.Date("Date de signature")
+    refclient     = fields.Char("N°Commande client", help="Utilisé pour les marchés publiques")
+    num_marche    = fields.Char("N°Marché"    , help="Utilisé pour les marchés publiques")
+    code_service  = fields.Char("Code service", help="Utilisé pour les marchés publiques")
+    traitance_id  = fields.Many2one('is.dossier.contrat.traitance', "Traitance", index=True)
+    invoice_ids   = fields.One2many('account.move', 'is_contrat_id', 'Factures', domain=[('state','not in',['cancel'])], readonly=True)
+    nb_factures   = fields.Integer("Nombre de factures")
+    detail_ids    = fields.One2many('is.dossier.contrat.detail', 'contrat_id', 'Détail')
+    restant_ht    = fields.Float("Restant HT"   , digits=(14,2), compute='compute_restant_ht', readonly=True, store=True)
+    facturable_ht = fields.Float("Facturable HT", digits=(14,2), compute='compute_restant_ht', readonly=True, store=True)
+    heure_ids     = fields.One2many('is.salarie.heure', 'contrat_id', 'Heures', readonly=True)
+    tva_id        = fields.Many2one('is.tva', 'TVA')
+    anomalie      = fields.Float("Anomalie", default=0)
     state         = fields.Selection([('en_cours','En cours'),('termine','Terminé')],"Etat", default='en_cours')
 
-    numligne_max  = fields.Integer(u"N° Ligne maxi", compute='compute_numligne_max')
-    show_generer_facture_btn = fields.Boolean(u"Afficher bouton générer facture", compute='compute_show_generer_facture_btn', readonly=True, store=False)
+    numligne_max  = fields.Integer("N° Ligne maxi", compute='compute_numligne_max')
+    show_generer_facture_btn = fields.Boolean("Afficher bouton générer facture", compute='compute_show_generer_facture_btn', readonly=True, store=False)
 
 
     def update_restant_ht_action(self):
@@ -415,7 +415,7 @@ class IsDossierContrat(models.Model):
 
 class IsDossierContratDetail(models.Model):
     _name = 'is.dossier.contrat.detail'
-    _description = u"Détail Contrat"
+    _description = "Détail Contrat"
     _order = 'contrat_id,numligne,id'
     _rec_name = 'numligne'
 
@@ -454,49 +454,49 @@ class IsDossierContratDetail(models.Model):
     dossier_id  = fields.Many2one(related='contrat_id.dossier_id')
     description = fields.Char(related='contrat_id.description')
 
-    numligne    = fields.Integer(u"Ligne", default=0)
-    commentaire = fields.Boolean(u"Commentaire", default=False)
+    numligne    = fields.Integer("Ligne", default=0)
+    commentaire = fields.Boolean("Commentaire", default=False)
     phase_id    = fields.Many2one('is.dossier.contrat.phase', 'Phase')
-    det_phase   = fields.Char(u"Description Phase", related='phase_id.det_phase')
+    det_phase   = fields.Char("Description Phase", related='phase_id.det_phase')
 
-    texte       = fields.Char(u"Description")
-    dateremise  = fields.Date(u"Date")
-    facture_le  = fields.Date(u"Pour le")
+    texte       = fields.Char("Description")
+    dateremise  = fields.Date("Date")
+    facture_le  = fields.Date("Pour le")
 
-    stxt1       = fields.Char(u"Description 1")
-    montant1    = fields.Float(u"Montant 1", digits=(14,4))
+    stxt1       = fields.Char("Description 1")
+    montant1    = fields.Float("Montant 1", digits=(14,4))
     codass1_id  = fields.Many2one('is.dossier.code.assurance', 'Code assurance 1')
 
-    stxt2       = fields.Char(u"Description 2")
-    montant2    = fields.Float(u"Montant 2", digits=(14,4))
+    stxt2       = fields.Char("Description 2")
+    montant2    = fields.Float("Montant 2", digits=(14,4))
     codass2_id  = fields.Many2one('is.dossier.code.assurance', 'Code assurance 2')
 
-    stxt3       = fields.Char(u"Description 3")
-    montant3    = fields.Float(u"Montant 3", digits=(14,4))
+    stxt3       = fields.Char("Description 3")
+    montant3    = fields.Float("Montant 3", digits=(14,4))
     codass3_id  = fields.Many2one('is.dossier.code.assurance', 'Code assurance 3')
 
-    stxt4       = fields.Char(u"Description 4")
-    montant4    = fields.Float(u"Montant 4", digits=(14,4))
+    stxt4       = fields.Char("Description 4")
+    montant4    = fields.Float("Montant 4", digits=(14,4))
     codass4_id  = fields.Many2one('is.dossier.code.assurance', 'Code assurance 4')
 
-    montant_ht  = fields.Float(u"Montant HT", digits=(14,2), compute='_compute_montant_ht', readonly=True, store=True)
+    montant_ht  = fields.Float("Montant HT", digits=(14,2), compute='_compute_montant_ht', readonly=True, store=True)
 
-    avancement  = fields.Float(u"% avancement", digits=(14,4))
-    nota        = fields.Char(u"Nota")
+    avancement  = fields.Float("% avancement", digits=(14,4))
+    nota        = fields.Char("Nota")
     facturable  = fields.Selection([('oui','Oui'),('non','Non')],"Facturable", default='oui')
-    a_facturer  = fields.Float(u"% à facturer", digits=(14,4))
-    facture            = fields.Float(u"% facturé"         , compute='_compute_facture', readonly=True, store=False, digits=(14,4))
-    montant_a_facturer = fields.Float(u"Montant à facturer", compute='_compute_facture', readonly=True, store=False)
-    montant_facture    = fields.Float(u"Montant facturé"   , compute='_compute_facture', readonly=True, store=False)
+    a_facturer  = fields.Float("% à facturer", digits=(14,4))
+    facture            = fields.Float("% facturé"         , compute='_compute_facture', readonly=True, store=False, digits=(14,4))
+    montant_a_facturer = fields.Float("Montant à facturer", compute='_compute_facture', readonly=True, store=False)
+    montant_facture    = fields.Float("Montant facturé"   , compute='_compute_facture', readonly=True, store=False)
 
     facture_recursif   = fields.Float("% facturé récursif", digits=(14,4))
 
-    reste_facturable   = fields.Float(u"% Reste Facturable", digits=(14,4), compute='_compute_montant_ht', readonly=True, store=True)
+    reste_facturable   = fields.Float("% Reste Facturable", digits=(14,4), compute='_compute_montant_ht', readonly=True, store=True)
 
-    encours                    = fields.Float(u"% En cours"                , digits=(14,4), compute='_compute_facture', readonly=True, store=False)
-    montant_encours            = fields.Float(u"Montant en cours"          , digits=(14,2), compute='_compute_facture', readonly=True, store=False)
-    restant                    = fields.Float(u"% Restant à facturer"      , digits=(14,4), compute='_compute_facture', readonly=True, store=False)
-    montant_restant            = fields.Float(u"Montant restant à facturer", digits=(14,2), compute='_compute_facture', readonly=True, store=False)
+    encours                    = fields.Float("% En cours"                , digits=(14,4), compute='_compute_facture', readonly=True, store=False)
+    montant_encours            = fields.Float("Montant en cours"          , digits=(14,2), compute='_compute_facture', readonly=True, store=False)
+    restant                    = fields.Float("% Restant à facturer"      , digits=(14,4), compute='_compute_facture', readonly=True, store=False)
+    montant_restant            = fields.Float("Montant restant à facturer", digits=(14,2), compute='_compute_facture', readonly=True, store=False)
 
 
     @api.model_create_multi
@@ -521,47 +521,47 @@ class IsDossierContratDetail(models.Model):
 
 class IsDossierContratPhase(models.Model):
     _name = 'is.dossier.contrat.phase'
-    _description = u"Phase Contrat"
+    _description = "Phase Contrat"
     _order = 'txt_phase'
     _rec_name = 'txt_phase'
 
-    ref_phase       = fields.Integer(u"Ref"     , required=True, index=True)
-    txt_phase       = fields.Char(u"Code"       , required=True, index=True)
-    det_phase       = fields.Char(u"Description", required=True, index=True)
+    ref_phase       = fields.Integer("Ref"     , required=True, index=True)
+    txt_phase       = fields.Char("Code"       , required=True, index=True)
+    det_phase       = fields.Char("Description", required=True, index=True)
 
 
 class IsDossierCodeAssurance(models.Model):
     _name = 'is.dossier.code.assurance'
-    _description = u"Code Assurance"
+    _description = "Code Assurance"
     _order = 'ordre,code'
     _rec_name = 'code'
 
-    ordre       = fields.Char(u"Ordre"      , required=True, index=True, default='x')
-    code        = fields.Char(u"Code"       , required=True, index=True)
-    description = fields.Char(u"Description", required=True, index=True)
+    ordre       = fields.Char("Ordre"      , required=True, index=True, default='x')
+    code        = fields.Char("Code"       , required=True, index=True)
+    description = fields.Char("Description", required=True, index=True)
 
 
 class IsSalarieHeure(models.Model):
     _name = 'is.salarie.heure'
-    _description = u"Heures des salariés"
+    _description = "Heures des salariés"
     _order = 'date_travaillee desc'
     _rec_name = 'date_travaillee'
 
-    date_travaillee = fields.Date(u"Date travaillée", required=True, index=True, default=lambda *a: fields.Date.today())
+    date_travaillee = fields.Date("Date travaillée", required=True, index=True, default=lambda *a: fields.Date.today())
     user_id         = fields.Many2one('res.users', 'Utilisateur', required=True, default=lambda self: self.env.user)
-    login           = fields.Char(u"Login")
+    login           = fields.Char("Login")
     contrat_id      = fields.Many2one('is.dossier.contrat', 'Contrat', required=True, ondelete='cascade')
-    nb_heures       = fields.Float(u"Nb heures")
-    note            = fields.Char(u"Note")
-    id_heures       = fields.Integer(u"id_heures", index=True)
+    nb_heures       = fields.Float("Nb heures")
+    note            = fields.Char("Note")
+    id_heures       = fields.Integer("id_heures", index=True)
 
 
 class IsDeclarationMAF(models.Model):
     _name = 'is.declaration.maf'
-    _description = u"Déclaration MAF"
+    _description = "Déclaration MAF"
 
-    name          = fields.Char(u"Année", required=True, index=True)
-    type_document = fields.Selection([('maf',u'Déclaration MAF'),('dget','DGET')],"Type de document", default='maf')
+    name          = fields.Char("Année", required=True, index=True)
+    type_document = fields.Selection([('maf','Déclaration MAF'),('dget','DGET')],"Type de document", default='maf')
 
     def getCodeAssurance(self,code_id):
         cr = self.env.cr
@@ -923,7 +923,7 @@ class IsDeclarationMAF(models.Model):
 
 class IsConcours(models.Model):
     _name = 'is.concours'
-    _description = u"Concours"
+    _description = "Concours"
     _order = 'numconcours desc'
     _rec_name = 'numconcours'
 
@@ -937,31 +937,31 @@ class IsConcours(models.Model):
         numconcours=prefix+('000'+str(numconcours))[-3:]
         return numconcours
 
-    numconcours    = fields.Char(u"Numero de concours", required=True, index=True, default=lambda self: self._get_numconcours())
-    organisme_id   = fields.Many2one('res.partner', u"Organisme", domain=[('is_company','=',True)])
-    nom            = fields.Char(u"Nom du concours")
-    libelle_exacte = fields.Text(u"Libelle exacte")
-    lieu           = fields.Char(u"Lieu")
-    dateparution   = fields.Date(u"Date de parution")
-    daterendu      = fields.Date(u"Date rendu")
-    journal        = fields.Char(u"Journal")
-    lienannonce    = fields.Char(u"Lien annonce")
-    qui_ids        = fields.One2many('is.concours.qui', 'concours_id', u'Equipes')
+    numconcours    = fields.Char("Numero de concours", required=True, index=True, default=lambda self: self._get_numconcours())
+    organisme_id   = fields.Many2one('res.partner', "Organisme", domain=[('is_company','=',True)])
+    nom            = fields.Char("Nom du concours")
+    libelle_exacte = fields.Text("Libelle exacte")
+    lieu           = fields.Char("Lieu")
+    dateparution   = fields.Date("Date de parution")
+    daterendu      = fields.Date("Date rendu")
+    journal        = fields.Char("Journal")
+    lienannonce    = fields.Char("Lien annonce")
+    qui_ids        = fields.One2many('is.concours.qui', 'concours_id', 'Equipes')
 
 
 class IsConcoursQui(models.Model):
     _name = 'is.concours.qui'
-    _description = u"Concours Qui"
+    _description = "Concours Qui"
     _order = 'nom'
     _rec_name = 'nom'
 
     concours_id    = fields.Many2one('is.concours', 'Concours', required=True, ondelete='cascade')
-    nom            = fields.Char(u"Nom", required=True, index=True)
-    dateenvoi      = fields.Date(u"Date d'envoi")
+    nom            = fields.Char("Nom", required=True, index=True)
+    dateenvoi      = fields.Date("Date d'envoi")
     retenu         = fields.Selection([('oui','Oui'),('non','Non')],"Gagné" , default='non')
     gagne          = fields.Selection([('oui','Oui'),('non','Non')],"Retenu", default='non')
-    equipes        = fields.Text(u"Equipes")
-    idconcours_qui = fields.Integer(u"idconcours_qui", index=True)
+    equipes        = fields.Text("Equipes")
+    idconcours_qui = fields.Integer("idconcours_qui", index=True)
 
 
     

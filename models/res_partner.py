@@ -42,29 +42,29 @@ class IsClassementFournisseur(models.Model):
     @api.depends('code', 'nature', 'classement')
     def _compute_display_name(self):
         for obj in self:
-            obj.display_name = str(obj.code)+u' {'+str(obj.nature)+u'}{'+str(obj.classement)+u'}'
+            obj.display_name = str(obj.code)+' {'+str(obj.nature)+'}{'+str(obj.classement)+'}'
 
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
-    is_prefixe                   = fields.Char(u"Préfixe")
-    is_numero                    = fields.Integer(u"Numéro")
-    is_numero_fournisseur        = fields.Integer(u"Numéro Fournisseur")
-    is_service                   = fields.Char(u"Service")
-    is_contact                   = fields.Char(u"Contact")
-    is_specialite_ids            = fields.Many2many('is.specialite', 'res_partner_is_specialite_rel', 'partner_id', 'specialite_id', u'Spécialités')
+    is_prefixe                   = fields.Char("Préfixe")
+    is_numero                    = fields.Integer("Numéro")
+    is_numero_fournisseur        = fields.Integer("Numéro Fournisseur")
+    is_service                   = fields.Char("Service")
+    is_contact                   = fields.Char("Contact")
+    is_specialite_ids            = fields.Many2many('is.specialite', 'res_partner_is_specialite_rel', 'partner_id', 'specialite_id', 'Spécialités')
     is_classement_id             = fields.Many2one('is.classement', "Classement")
     is_classement_principal_id   = fields.Many2one('is.classement.fournisseur', "Classement principal")
     is_classement_secondaire_id  = fields.Many2one('is.classement.fournisseur', "Classement secondaire")
     is_classement_tertiaire_id   = fields.Many2one('is.classement.fournisseur', "Classement tertiaire")
-    is_acces_pro_url             = fields.Char(u"Accès pro au Site internet")
-    is_acces_pro_login           = fields.Char(u"Login accès pro")
-    is_acces_pro_pwd             = fields.Char(u"Mot de passe accès pro")
+    is_acces_pro_url             = fields.Char("Accès pro au Site internet")
+    is_acces_pro_login           = fields.Char("Login accès pro")
+    is_acces_pro_pwd             = fields.Char("Mot de passe accès pro")
     # v20 : customer, supplier (supprimés en v13) et title (supprimé en v20) recréés à l'identique
-    is_client                    = fields.Boolean(u"Client")
-    is_fournisseur               = fields.Boolean(u"Fournisseur")
-    is_titre_id                  = fields.Many2one('is.titre', u"Titre")
+    is_client                    = fields.Boolean("Client")
+    is_fournisseur               = fields.Boolean("Fournisseur")
+    is_titre_id                  = fields.Many2one('is.titre', "Titre")
 
 
     # En v20, is_company est calculé (sans parent et avec un n° de TVA) : redevient une case à cocher
