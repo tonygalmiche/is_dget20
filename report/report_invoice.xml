@@ -11,9 +11,10 @@
                 <t t-set="lines" t-value="o.invoice_line_ids.sorted(key=lambda l: (l.sequence, l.id))"/>
                 <div class="page">
                     <style>
-                        /* v20 : police Arial comme en v12 (Lato, police de la société, par défaut) */
+                        /* v20 : police Arial comme en v12 (Lato, police de la société, par défaut) ; Liberation Sans
+                           (paquet fonts-liberation) en premier : sinon Helvetica => Nimbus Sans si fonts-urw-base35 */
                         .page{
-                            font-family: Arial, Helvetica, sans-serif;
+                            font-family: "Liberation Sans", Arial, Helvetica, sans-serif;
                         }
                         table {
                             border:0;
