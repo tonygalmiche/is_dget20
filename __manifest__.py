@@ -17,6 +17,7 @@ InfoSaône - Module Odoo 20 pour DGET
         'sale',
         'purchase',
         'product',
+        'project',              # projets et tâches utilisés en v12 (non installé dans la 1re version de dget20)
         'is_theme_entreprise',  # couleur de l'entreprise (module générique)
         'is_interface_epuree',  # page de connexion épurée, inscription sur invitation (module générique)
         # Menus masqués (views/menu.xml)
