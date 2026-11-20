@@ -23,7 +23,7 @@
     <template id="html_container">
         <t t-set="body_classname" t-value="'container'"/>
         <t t-call="web.report_layout">
-            <t t-raw="0"/>
+            <t t-out="0"/>
         </t>
     </template>
 
@@ -38,7 +38,7 @@
 
         <div t-attf-class="article o_report_layout_standard o_company_#{company.id}_layout"  t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')">
             <t t-call="web.address_layout"/>
-            <t t-raw="0"/>
+            <t t-out="0"/>
         </div>
 
         <div t-attf-class="footer o_standard_footer o_company_#{company.id}_layout">
@@ -74,7 +74,7 @@
             </t>
         </t>
         <t t-call="is_dget20.external_layout_standard">
-            <t t-raw="0"/>
+            <t t-out="0"/>
         </t>
 
     </template>
@@ -139,22 +139,22 @@
                             <t t-foreach="contrats[0]" t-as="c">
                                 <tr>
                                     <td style="border:1px solid black;">
-                                        <div><b>Référence : </b><span t-esc="c['contrat'].name"/> : <span t-esc="c['contrat'].dossier_id.nom"/></div>
-                                        <div><b>Date début de mission : </b><span t-esc="c['contrat'].date and c['contrat'].date.strftime('%d/%m/%Y') or ''"/></div>
+                                        <div><b>Référence : </b><span t-out="c['contrat'].name"/> : <span t-out="c['contrat'].dossier_id.nom"/></div>
+                                        <div><b>Date début de mission : </b><span t-out="c['contrat'].date and c['contrat'].date.strftime('%d/%m/%Y') or ''"/></div>
                                         <t t-if="c['contrat'].state=='en_cours'">
                                             <div><b>Mission terminée : </b>Non</div>
                                         </t>
                                         <t t-else="">
                                             <div><b>Mission terminée : </b>Oui</div>
                                         </t>
-                                        <div><b>Client : </b><span t-esc="c['contrat'].client_id.name"/></div>
-                                        <div><span t-esc="c['contrat'].client_id.zip"/><span t-esc="c['contrat'].client_id.street"/></div>
+                                        <div><b>Client : </b><span t-out="c['contrat'].client_id.name"/></div>
+                                        <div><span t-out="c['contrat'].client_id.zip"/><span t-out="c['contrat'].client_id.street"/></div>
                                         <div><b>Localisation du chantier : </b></div>
-                                        <div><span t-esc="c['contrat'].dossier_id.codepostal"/> <span t-esc="c['contrat'].dossier_id.lieu"/></div>
+                                        <div><span t-out="c['contrat'].dossier_id.codepostal"/> <span t-out="c['contrat'].dossier_id.lieu"/></div>
                                     </td>
-                                    <td style="border:1px solid black;text-align:center;vertical-align: middle;"><span t-esc="c['code']"/></td>
-                                    <td style="border:1px solid black;text-align:center;vertical-align: middle;"><span t-esc="c['traitance']"/></td>
-                                    <td style="border:1px solid black;text-align:center;vertical-align: middle;"><span t-esc="'{:,.2f} €'.format(c['montant']).replace(',',' ').replace('.',',')"/></td>
+                                    <td style="border:1px solid black;text-align:center;vertical-align: middle;"><span t-out="c['code']"/></td>
+                                    <td style="border:1px solid black;text-align:center;vertical-align: middle;"><span t-out="c['traitance']"/></td>
+                                    <td style="border:1px solid black;text-align:center;vertical-align: middle;"><span t-out="'{:,.2f} €'.format(c['montant']).replace(',',' ').replace('.',',')"/></td>
                                     <td>&#160;</td>
                                     <td>&#160;</td>
                                 </tr>
@@ -178,12 +178,12 @@
                         <tbody>
                             <t t-foreach="contrats[0]" t-as="c">
                                 <tr>
-                                    <td style="border:1px solid black;"><span t-esc="c['contrat'].name"/></td>
-                                    <td style="border:1px solid black;"><span t-esc="c['contrat'].dossier_id.numaff"/></td>
-                                    <td style="border:1px solid black;"><span t-esc="c['contrat'].dossier_id.nom"/></td>
-                                    <td style="border:1px solid black;text-align:center"><span t-esc="c['code']"/></td>
-                                    <td style="border:1px solid black;text-align:center"><span t-esc="c['traitance']"/></td>
-                                    <td style="border:1px solid black;text-align:right"><span t-esc="'{:,.2f} €'.format(c['montant']).replace(',',' ').replace('.',',')"/></td>
+                                    <td style="border:1px solid black;"><span t-out="c['contrat'].name"/></td>
+                                    <td style="border:1px solid black;"><span t-out="c['contrat'].dossier_id.numaff"/></td>
+                                    <td style="border:1px solid black;"><span t-out="c['contrat'].dossier_id.nom"/></td>
+                                    <td style="border:1px solid black;text-align:center"><span t-out="c['code']"/></td>
+                                    <td style="border:1px solid black;text-align:center"><span t-out="c['traitance']"/></td>
+                                    <td style="border:1px solid black;text-align:right"><span t-out="'{:,.2f} €'.format(c['montant']).replace(',',' ').replace('.',',')"/></td>
                                 </tr>
                             </t>
                         </tbody>
@@ -207,8 +207,8 @@
                             <t t-set="total"   t-value="total+montant"/>
 
                             <tr t-if="montant>0" style="height:8mm;white-space: nowrap;">
-                                <td style="border:1px solid black;text-align:center"><span t-esc="c[0]"/></td>
-                                <td style="border:1px solid black;text-align:right"><span t-esc="'{:,.2f} €'.format(montant).replace(',',' ').replace('.',',')"/></td>
+                                <td style="border:1px solid black;text-align:center"><span t-out="c[0]"/></td>
+                                <td style="border:1px solid black;text-align:right"><span t-out="'{:,.2f} €'.format(montant).replace(',',' ').replace('.',',')"/></td>
                             </tr>
                         </t>
                     </tbody>
@@ -216,7 +216,7 @@
                     <tfoot>
                         <tr>
                             <th>Total : </th>
-                            <th style="border:1px solid black;text-align:right"><span t-esc="'{:,.2f} €'.format(total).replace(',',' ').replace('.',',')"/></th>
+                            <th style="border:1px solid black;text-align:right"><span t-out="'{:,.2f} €'.format(total).replace(',',' ').replace('.',',')"/></th>
                         </tr>
                     </tfoot>
 
@@ -238,16 +238,16 @@
     </template>
 
 
-    <report 
-        id="is_declaration_maf_report"
-        string="Déclaration MAF"
-        model="is.declaration.maf" 
-        report_type="qweb-pdf"
-        file="is_dget20.report_is_declaration_maf" 
-        name="is_dget20.report_is_declaration_maf" 
-        paperformat="is_dget20.is_declaration_maf_paperformat"
-
-    />
+    <record id="is_declaration_maf_report" model="ir.actions.report">
+        <field name="name">Déclaration MAF</field>
+        <field name="model">is.declaration.maf</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">is_dget20.report_is_declaration_maf</field>
+        <field name="report_file">is_dget20.report_is_declaration_maf</field>
+        <field name="paperformat_id" ref="is_dget20.is_declaration_maf_paperformat"/>
+        <field name="binding_model_id" ref="model_is_declaration_maf"/>
+        <field name="binding_type">report</field>
+    </record>
 
 </data>
 </odoo>
