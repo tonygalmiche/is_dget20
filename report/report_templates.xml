@@ -18,7 +18,8 @@
             <!-- Dans l'aperçu de « Configurer la mise en page », company est l'assistant base.document.layout : champs lus sur la société -->
             <t t-set="societe" t-value="company.company_id if company._name == 'base.document.layout' else company"/>
             <div t-attf-class="footer o_standard_footer o_company_#{company.id}_layout {{report_type != 'pdf' and 'mt-auto'}}">
-                <table style="width:100%;font-size:8pt;border-top: 1px solid black;margin-top:3mm">
+                <!-- Police Arial comme en v12 (Lato, police de la société, par défaut en v20) -->
+                <table style="width:100%;font-size:8pt;border-top: 1px solid black;margin-top:3mm;font-family: Arial, Helvetica, sans-serif">
                     <tr>
                         <td style="width:90%">
                             <span t-field="societe.street"/> -
