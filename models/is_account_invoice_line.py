@@ -86,28 +86,28 @@ class is_account_invoice_line(models.Model):
                     id.numaff,
                     ail.is_contrat_detail_id,
                     ail.price_subtotal,
-                    (ail.quantity-ail.is_deja_facture) quantity,
+                    (ail.quantity-coalesce(ail.is_deja_facture,0)) quantity,
                     ail.is_invoice_id,
 
-                    (ail.quantity-ail.is_deja_facture)*idcd.montant1 total1,
-                    (ail.quantity-ail.is_deja_facture)*idcd.montant2 total2,
-                    (ail.quantity-ail.is_deja_facture)*idcd.montant3 total3,
-                    (ail.quantity-ail.is_deja_facture)*idcd.montant4 total4,
-                    (ail.quantity-ail.is_deja_facture)*(idcd.montant1+idcd.montant2+idcd.montant3+idcd.montant4) total_ligne,
+                    (ail.quantity-coalesce(ail.is_deja_facture,0))*idcd.montant1 total1,
+                    (ail.quantity-coalesce(ail.is_deja_facture,0))*idcd.montant2 total2,
+                    (ail.quantity-coalesce(ail.is_deja_facture,0))*idcd.montant3 total3,
+                    (ail.quantity-coalesce(ail.is_deja_facture,0))*idcd.montant4 total4,
+                    (ail.quantity-coalesce(ail.is_deja_facture,0))*(idcd.montant1+idcd.montant2+idcd.montant3+idcd.montant4) total_ligne,
 
 
 
-                    (ail.quantity-ail.is_deja_facture)*idcd.montant1/NullIf(((ail.quantity-ail.is_deja_facture)*ail.price_unit),0) rapport1,
-                    (ail.quantity-ail.is_deja_facture)*idcd.montant2/NullIf(((ail.quantity-ail.is_deja_facture)*ail.price_unit),0) rapport2,
-                    (ail.quantity-ail.is_deja_facture)*idcd.montant3/NullIf(((ail.quantity-ail.is_deja_facture)*ail.price_unit),0) rapport3,
-                    (ail.quantity-ail.is_deja_facture)*idcd.montant4/NullIf(((ail.quantity-ail.is_deja_facture)*ail.price_unit),0) rapport4,
+                    (ail.quantity-coalesce(ail.is_deja_facture,0))*idcd.montant1/NullIf(((ail.quantity-coalesce(ail.is_deja_facture,0))*ail.price_unit),0) rapport1,
+                    (ail.quantity-coalesce(ail.is_deja_facture,0))*idcd.montant2/NullIf(((ail.quantity-coalesce(ail.is_deja_facture,0))*ail.price_unit),0) rapport2,
+                    (ail.quantity-coalesce(ail.is_deja_facture,0))*idcd.montant3/NullIf(((ail.quantity-coalesce(ail.is_deja_facture,0))*ail.price_unit),0) rapport3,
+                    (ail.quantity-coalesce(ail.is_deja_facture,0))*idcd.montant4/NullIf(((ail.quantity-coalesce(ail.is_deja_facture,0))*ail.price_unit),0) rapport4,
 
-                    (ail.quantity-ail.is_deja_facture)*ail.price_unit/NullIf(ai.is_montant_hors_revision,0) rapport_total,
+                    (ail.quantity-coalesce(ail.is_deja_facture,0))*ail.price_unit/NullIf(ai.is_montant_hors_revision,0) rapport_total,
 
-                    (ail.quantity-ail.is_deja_facture)*idcd.montant1 + ((ail.quantity-ail.is_deja_facture)*idcd.montant1/NullIf(((ail.quantity-ail.is_deja_facture)*ail.price_unit),0)) * ((ail.quantity-ail.is_deja_facture)*ail.price_unit/NullIf(ai.is_montant_hors_revision,0)) * ai.is_montant_revision revision1,
-                    (ail.quantity-ail.is_deja_facture)*idcd.montant2 + ((ail.quantity-ail.is_deja_facture)*idcd.montant2/NullIf(((ail.quantity-ail.is_deja_facture)*ail.price_unit),0)) * ((ail.quantity-ail.is_deja_facture)*ail.price_unit/NullIf(ai.is_montant_hors_revision,0)) * ai.is_montant_revision revision2,
-                    (ail.quantity-ail.is_deja_facture)*idcd.montant3 + ((ail.quantity-ail.is_deja_facture)*idcd.montant3/NullIf(((ail.quantity-ail.is_deja_facture)*ail.price_unit),0)) * ((ail.quantity-ail.is_deja_facture)*ail.price_unit/NullIf(ai.is_montant_hors_revision,0)) * ai.is_montant_revision revision3,
-                    (ail.quantity-ail.is_deja_facture)*idcd.montant4 + ((ail.quantity-ail.is_deja_facture)*idcd.montant4/NullIf(((ail.quantity-ail.is_deja_facture)*ail.price_unit),0)) * ((ail.quantity-ail.is_deja_facture)*ail.price_unit/NullIf(ai.is_montant_hors_revision,0)) * ai.is_montant_revision revision4
+                    (ail.quantity-coalesce(ail.is_deja_facture,0))*idcd.montant1 + ((ail.quantity-coalesce(ail.is_deja_facture,0))*idcd.montant1/NullIf(((ail.quantity-coalesce(ail.is_deja_facture,0))*ail.price_unit),0)) * ((ail.quantity-coalesce(ail.is_deja_facture,0))*ail.price_unit/NullIf(ai.is_montant_hors_revision,0)) * ai.is_montant_revision revision1,
+                    (ail.quantity-coalesce(ail.is_deja_facture,0))*idcd.montant2 + ((ail.quantity-coalesce(ail.is_deja_facture,0))*idcd.montant2/NullIf(((ail.quantity-coalesce(ail.is_deja_facture,0))*ail.price_unit),0)) * ((ail.quantity-coalesce(ail.is_deja_facture,0))*ail.price_unit/NullIf(ai.is_montant_hors_revision,0)) * ai.is_montant_revision revision2,
+                    (ail.quantity-coalesce(ail.is_deja_facture,0))*idcd.montant3 + ((ail.quantity-coalesce(ail.is_deja_facture,0))*idcd.montant3/NullIf(((ail.quantity-coalesce(ail.is_deja_facture,0))*ail.price_unit),0)) * ((ail.quantity-coalesce(ail.is_deja_facture,0))*ail.price_unit/NullIf(ai.is_montant_hors_revision,0)) * ai.is_montant_revision revision3,
+                    (ail.quantity-coalesce(ail.is_deja_facture,0))*idcd.montant4 + ((ail.quantity-coalesce(ail.is_deja_facture,0))*idcd.montant4/NullIf(((ail.quantity-coalesce(ail.is_deja_facture,0))*ail.price_unit),0)) * ((ail.quantity-coalesce(ail.is_deja_facture,0))*ail.price_unit/NullIf(ai.is_montant_hors_revision,0)) * ai.is_montant_revision revision4
 
 
 
