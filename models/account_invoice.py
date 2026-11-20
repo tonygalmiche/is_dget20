@@ -186,7 +186,6 @@ class AccountMove(models.Model):
                 for line in factures:
                     deja_factures, visites = line.is_invoice_id.update_deja_facture_recursif(deja_factures, visites, now)
                     line.is_deja_facture = line.quantity
-                    line.reellement_facture = 0.
                 # Mettre à jour la facture courante
                 for line in services:
                     # Mettre à jour odoo en utilisant les resultat des factures enfants. 
