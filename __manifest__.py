@@ -34,7 +34,7 @@ InfoSaône - Module Odoo 20 pour DGET
         'views/is_account_invoice_line_views.xml',
         'views/menu.xml',
         'report/report_templates.xml',
-        # 'report/report_invoice.xml',
+        'report/report_invoice.xml',
         # 'report/report_is_dossier.xml',
         'report/report_is_declaration_maf.xml',
         'data/ir_module_module.xml',
