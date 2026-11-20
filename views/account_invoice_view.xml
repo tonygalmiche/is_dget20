@@ -74,6 +74,9 @@
                     <field name="is_reellement_facture"          readonly="1" optional="hide"/>
                     <field name="is_montant_reellement_facture"  readonly="1" sum="Total" optional="hide"/>
                 </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']/list/field[@name='account_id']" position="attributes">
+                    <attribute name="optional">hide</attribute>
+                </xpath>
                 <field name="partner_bank_id" position="after">
                     <field name="is_date_update_facture" readonly="1"/>
                 </field>
