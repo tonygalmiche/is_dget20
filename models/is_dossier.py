@@ -286,6 +286,10 @@ class IsDossierContrat(models.Model):
 
 
     def generer_facture_action(self, vals=False):
+        # Facture créée, validée et mise à jour dans la même transaction, sans suivi : en v20, les lignes d'une pièce
+        # validée sont suivies dans le chatter et Odoo les compare aux valeurs de leur création (0, sans étiquettes de
+        # TVA) => sinon un message « Écriture comptable #… mise à jour » par ligne
+        self = self.with_context(mail_notrack=True)
         for obj in self:
 
             if not obj.show_generer_facture_btn:
@@ -405,9 +409,7 @@ class IsDossierContrat(models.Model):
             #*******************************************************************
 
             #*******************************************************************
-            # Sans suivi : en v20, les lignes d'une pièce validée sont suivies dans le chatter et Odoo compare avec les
-            # valeurs de la création (0, sans étiquettes) => « Écriture comptable #… mise à jour » pour chaque ligne
-            invoice.with_context(mail_notrack=True).update_deja_facture_action()
+            invoice.update_deja_facture_action()
             obj.update_reellement_facture_contrat()
             obj.compute_restant_ht()
 
