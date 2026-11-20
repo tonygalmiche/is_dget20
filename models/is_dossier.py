@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models, _
+from odoo import api, fields, models, _, Command
 from datetime import date, datetime
 from odoo.exceptions import UserError
 import base64
@@ -315,56 +315,36 @@ class IsDossierContrat(models.Model):
 
 
             #** Création entête facture ****************************************
+            # v20 : facture et lignes créées en un seul appel, avec leurs valeurs finales (libellé, prix, compte et taxe de
+            # la TVA DGET du contrat, comme le faisait update_tva_account_action sur les lignes avec un article) ; en v20,
+            # chaque écriture sur une ligne recalcule toute la facture (création, onchange et réécritures ligne par ligne :
+            # environ 5 s pour 12 lignes)
             invoice_type="out_invoice"
             sens_facture=1
             if obj.facturable_ht<0:
                 invoice_type="out_refund"
                 sens_facture=-1
-            vals={
-                'name'              : number,
-                'invoice_origin'    : obj.name,
-                'partner_id'        : obj.client_id.id,
-                'is_contrat_id'     : obj.id,
-                'fiscal_position_id': 1,
-                'is_tva_id'         : obj.tva_id.id,
-                'move_type'         : invoice_type,
-                'state'             : 'draft',
-            }
+            tva = obj.tva_id
+            lignes = []
 
-            invoice=self.env['account.move'].create(vals)
-            invoice_id = invoice.id
-            #*******************************************************************
-
-            #** Création lignes du contrat *************************************
+            #** Lignes du contrat **********************************************
             for line in obj.detail_ids:
                 if line.commentaire:
-                    vals={
-                        'move_id'   : invoice_id,
+                    lignes.append(Command.create({
                         'is_contrat_detail_id': line.id,
                         'display_type': 'line_note',
                         'name'      : line.texte,
-                        'quantity'  : False,
-                        'account_id': False,
-                    }
-                    invoice_line=self.env['account.move.line'].create(vals)
+                    }))
                 else:
-                    quantity = line.a_facturer/100.0
-                    vals={
-                        'move_id'   : invoice_id,
+                    lignes.append(Command.create({
                         'is_contrat_detail_id': line.id,
                         'product_id': 1,
                         'name'      : line.texte,
-                        'quantity'  : quantity,
-                        'price_unit': False,
-                        'account_id': 622, #701100
-                    }
-                    invoice_line=self.env['account.move.line'].create(vals)
-                    line_res = invoice_line.uptate_onchange_product_id()
-                    vals={
-                        'name'      : line.texte,
+                        'quantity'  : line.a_facturer/100.0,
                         'price_unit': sens_facture*line.montant_ht,
-                    }
-                    invoice_line.write(vals)
+                        'account_id': tva.account_id.id,
+                        'tax_ids'   : [Command.set([tva.tax_id.id])],
+                    }))
             #*******************************************************************
 
             #** Ajout des factures réalisées ***********************************
@@ -372,36 +352,42 @@ class IsDossierContrat(models.Model):
                 ('is_contrat_id','=',obj.id),
                 ('invoice_date','<=',date.today()),
                 ('state','not in',['cancel']),
-                ('id','!=',invoice_id),
             ]
             factures = self.env['account.move'].search(filtre,order='invoice_date')
             for facture in factures:
                 sens_ligne_facture = 1
                 if facture.move_type == "out_refund":
                     sens_ligne_facture = -1
-                vals={
-                    'move_id'      : invoice_id,
+                lignes.append(Command.create({
                     'product_id'   : 2,
                     'name'         : facture.name,
                     'quantity'     : 1,
-                    'price_unit'   : 0,
-                    'account_id'   : 622, #701100
-                    'is_invoice_id': facture.id,
-                }
-                invoice_line=self.env['account.move.line'].create(vals)
-                line_res = invoice_line.uptate_onchange_product_id()
-                vals={
-                    'name'      : facture.name,
                     # On veut que le montant final d'une invoice soit positif quelque soit le type d'invoice
                     # Donc on veut que les lignes des invoices précédentes soient en moins si sont type est different
                     # du type de l'invoice donc "-(sens_facture*sens_ligne_facture)"
                     'price_unit'   : -(sens_facture*sens_ligne_facture)*facture.is_montant_hors_revision, # Ceci donne tout bon! 3/3
-                }
-                invoice_line.write(vals)
+                    'account_id'   : tva.account_id.id,
+                    'tax_ids'      : [Command.set([tva.tax_id.id])],
+                    'is_invoice_id': facture.id,
+                }))
             #*******************************************************************
 
-            #** Recalcul de la TVA et validation de la facture *****************
-            res_validate = invoice.update_tva_account_action()
+            #** Création de la facture *****************************************
+            vals={
+                'name'              : number,
+                'invoice_origin'    : obj.name,
+                'partner_id'        : obj.client_id.id,
+                'is_contrat_id'     : obj.id,
+                'fiscal_position_id': 1,
+                'is_tva_id'         : tva.id,
+                'move_type'         : invoice_type,
+                'state'             : 'draft',
+                'invoice_line_ids'  : lignes,
+            }
+            invoice=self.env['account.move'].create(vals)
+            #*******************************************************************
+
+            #** Validation de la facture ***************************************
             try:
                res_validate = invoice.action_post()
             except:
