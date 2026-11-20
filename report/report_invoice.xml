@@ -406,5 +406,14 @@
             <field name="binding_model_id" ref="account.model_account_move"/>
             <field name="binding_type">report</field>
         </record>
+
+        <!-- Factures standard de la v20 retirées du menu Imprimer (seule la facture DGET existait en v12) ; actions
+             gardées. Réappliqué à chaque -u account (is_dget20 dépend d'account) -->
+        <record id="account.account_invoices" model="ir.actions.report">
+            <field name="binding_model_id" eval="False"/>
+        </record>
+        <record id="account.account_invoices_without_payment" model="ir.actions.report">
+            <field name="binding_model_id" eval="False"/>
+        </record>
     </data>
 </odoo>
