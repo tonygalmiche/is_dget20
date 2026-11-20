@@ -68,11 +68,11 @@
                 </xpath>
                 <!-- v20 : produit et libellé regroupés dans la colonne product_and_description -->
                 <xpath expr="//field[@name='invoice_line_ids']/list/column[@name='product_and_description']" position="after">
-                    <field name="is_contrat_detail_id"           readonly="1" domain="[('contrat_id','=',parent.is_contrat_id)]"/>
-                    <field name="is_invoice_id"                  readonly="1"/>
-                    <field name="is_deja_facture"                readonly="1"/>
-                    <field name="is_reellement_facture"          readonly="1"/>
-                    <field name="is_montant_reellement_facture"  readonly="1" sum="Total"/>
+                    <field name="is_contrat_detail_id"           readonly="1" domain="[('contrat_id','=',parent.is_contrat_id)]" optional="hide"/>
+                    <field name="is_invoice_id"                  readonly="1" optional="hide"/>
+                    <field name="is_deja_facture"                readonly="1" optional="hide"/>
+                    <field name="is_reellement_facture"          readonly="1" optional="hide"/>
+                    <field name="is_montant_reellement_facture"  readonly="1" sum="Total" optional="hide"/>
                 </xpath>
                 <field name="partner_bank_id" position="after">
                     <field name="is_date_update_facture" readonly="1"/>
