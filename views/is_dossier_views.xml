@@ -47,7 +47,7 @@
                         <field name="referencee_ids" widget="many2many_tags"/>
                     </group>
                     <group string="Contrats">
-                        <field name="contrat_ids" nolabel="1" readonly="1">
+                        <field name="contrat_ids" nolabel="1" colspan="2" readonly="1">
                             <list default_order="name">
                                 <button string="Contrat" title="Contrat" name="acceder_contrat_action" type="object" icon="zoom_in"/>
                                 <field name="name"/>
@@ -62,7 +62,7 @@
                     </group>
 
                     <group string="Adjudicataires">
-                        <field name="adjudicataire_ids" nolabel="1">
+                        <field name="adjudicataire_ids" nolabel="1" colspan="2">
                             <list editable="bottom">
                                 <field name="adjudicataire_id" required="1"/>
                                 <field name="nomdulot"/>
@@ -74,7 +74,7 @@
                     </group>
 
                     <group string="Notes">
-                        <field name="note_ids" nolabel="1">
+                        <field name="note_ids" nolabel="1" colspan="2">
                             <list editable="bottom">
                                 <field name="date"/>
                                 <field name="auteur"/>
@@ -312,7 +312,7 @@
                         </group>
                     </group>
                     <group string="Composition du contrat">
-                        <field name="detail_ids" nolabel="1" context="{'dossier_id': dossier_id,'test':id}">
+                        <field name="detail_ids" nolabel="1" colspan="2" context="{'dossier_id': dossier_id,'test':id}">
                             <list decoration-info="commentaire == True">
                                 <field name="numligne" widget="handle"/>
                                 <field name="commentaire" invisible="1"/>
@@ -391,7 +391,7 @@
                         />
                     </group>
                     <group>
-                        <field name="invoice_ids" nolabel="1">
+                        <field name="invoice_ids" nolabel="1" colspan="2">
                             <list decoration-danger="amount_untaxed_signed &lt; 0">
                                 <button string="Facture" title="Facture" name="acceder_facture_action" type="object" icon="zoom_in"/>
                                 <field name="name"/>
@@ -408,7 +408,7 @@
                         <field name="nb_factures"/>
                     </group>
                     <group string="Heures">
-                        <field name="heure_ids" nolabel="1">
+                        <field name="heure_ids" nolabel="1" colspan="2">
                             <list>
                                 <field name="date_travaillee"/>
                                 <field name="user_id"/>
@@ -934,7 +934,7 @@
                         </group>
                     </group>
                     <group>
-                        <field name="qui_ids" nolabel="1">
+                        <field name="qui_ids" nolabel="1" colspan="2">
                             <list editable="bottom">
                                 <field name="nom"/>
                                 <field name="dateenvoi"/>
