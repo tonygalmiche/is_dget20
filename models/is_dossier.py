@@ -405,7 +405,9 @@ class IsDossierContrat(models.Model):
             #*******************************************************************
 
             #*******************************************************************
-            invoice.update_deja_facture_action()
+            # Sans suivi : en v20, les lignes d'une pièce validée sont suivies dans le chatter et Odoo compare avec les
+            # valeurs de la création (0, sans étiquettes) => « Écriture comptable #… mise à jour » pour chaque ligne
+            invoice.with_context(mail_notrack=True).update_deja_facture_action()
             obj.update_reellement_facture_contrat()
             obj.compute_restant_ht()
 
