@@ -243,7 +243,6 @@
         <field name="model">is.declaration.maf</field>
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">is_dget20.report_is_declaration_maf</field>
-        <field name="report_file">is_dget20.report_is_declaration_maf</field>
         <field name="paperformat_id" ref="is_dget20.is_declaration_maf_paperformat"/>
         <field name="binding_model_id" ref="model_is_declaration_maf"/>
         <field name="binding_type">report</field>
