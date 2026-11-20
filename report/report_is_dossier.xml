@@ -6,6 +6,14 @@
         <t t-call="web.external_layout">
             <div class="page">
                 <style>
+                    /* v20 : police de la v12 (Lato, police de la société, par défaut) */
+                    .page{
+                        font-family: "Liberation Sans", Arial, Helvetica, sans-serif;
+                    }
+                    /* v20 (Bootstrap 5) : bordure de largeur 0 sur les lignes, affichée en filet par wkhtmltopdf */
+                    thead, tbody, tfoot, tr {
+                        border: 0 none;
+                    }
                     td{
                         font-size:28pt;
                         font-weight: bold;
@@ -59,14 +67,14 @@
     </template>
 
 
-    <report 
-        id="is_dossier_report"
-        string="Etiquettes du dossier"
-        model="is.dossier" 
-        report_type="qweb-pdf"
-        file="is_dget20.report_is_dossier" 
-        name="is_dget20.report_is_dossier" 
-    />
+    <record id="is_dossier_report" model="ir.actions.report">
+        <field name="name">Etiquettes du dossier</field>
+        <field name="model">is.dossier</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">is_dget20.report_is_dossier</field>
+        <field name="binding_model_id" ref="model_is_dossier"/>
+        <field name="binding_type">report</field>
+    </record>
 
 </data>
 </odoo>
