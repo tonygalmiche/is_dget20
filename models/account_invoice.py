@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models, _
+from odoo.tools import float_round
 from datetime import date, datetime
 
 
@@ -164,15 +165,18 @@ class AccountMove(models.Model):
             if obj not in visites and factures == []:
                 for line in services:
 
-                    # mettre à jour odoo, la colonne reellement factures
-                    line.is_reellement_facture = line.quantity
-                    line.is_montant_reellement_facture = line.is_reellement_facture * abs(line.price_unit)
-
-                    # mettre à jour odoo, la colonne déjà factures
-                    line.is_deja_facture = 0.
+                    # mettre à jour odoo, les colonnes reellement factures et déjà factures
+                    # v20 : une seule écriture par ligne (chaque écriture sur une ligne de facture recalcule la facture) ;
+                    # valeurs arrondies comme le fait Odoo à l'affectation d'un champ (6 décimales)
+                    reellement_facture = float_round(line.quantity, precision_digits=6)
+                    line.write({
+                        'is_reellement_facture'        : reellement_facture,
+                        'is_montant_reellement_facture': reellement_facture * abs(line.price_unit),
+                        'is_deja_facture'              : 0.,
+                    })
 
                     # mettre à jour la liste des choses déjà facturées avec celles facturées dans la facture courante
-                    deja_factures[line.is_contrat_detail_id] = line.is_reellement_facture
+                    deja_factures[line.is_contrat_detail_id] = reellement_facture
                 # mettre à jour le "now"
                 obj.is_date_update_facture = now
                 # rajouter la facture courante come visitee
@@ -188,17 +192,22 @@ class AccountMove(models.Model):
                     line.is_deja_facture = line.quantity
                 # Mettre à jour la facture courante
                 for line in services:
-                    # Mettre à jour odoo en utilisant les resultat des factures enfants. 
+                    # Mettre à jour odoo en utilisant les resultat des factures enfants.
                     if line.is_contrat_detail_id in deja_factures:
-                        line.is_deja_facture = deja_factures[line.is_contrat_detail_id]
+                        deja_facture = float_round(deja_factures[line.is_contrat_detail_id], precision_digits=6)
                     # Sinon mettre à 0
                     else:
-                        line.is_deja_facture = 0
-                    line.is_reellement_facture = line.quantity - line.is_deja_facture
-                    line.is_montant_reellement_facture = line.is_reellement_facture * abs(line.price_unit)
-                    # mettre à jour la liste des choses des "futurs" déjà facturées 
+                        deja_facture = 0.
+                    # v20 : une seule écriture par ligne, valeurs arrondies comme à l'affectation d'un champ (6 décimales)
+                    reellement_facture = float_round(line.quantity - deja_facture, precision_digits=6)
+                    line.write({
+                        'is_deja_facture'              : deja_facture,
+                        'is_reellement_facture'        : reellement_facture,
+                        'is_montant_reellement_facture': reellement_facture * abs(line.price_unit),
+                    })
+                    # mettre à jour la liste des choses des "futurs" déjà facturées
                     # comme la somme des déjà facturées + du reellement facturé de cette facture
-                    deja_factures[line.is_contrat_detail_id] = line.is_reellement_facture + line.is_deja_facture
+                    deja_factures[line.is_contrat_detail_id] = reellement_facture + deja_facture
 
                 # mettre à jour le "now"
                 obj.is_date_update_facture = now
